@@ -2,7 +2,6 @@ import pygame
 import time
 from typing import Final
 import game_manager
-import render_manager
 
 # INIT VARIABLES
 pygame.init()
