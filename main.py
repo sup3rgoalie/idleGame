@@ -2,10 +2,18 @@ import pygame
 import time
 from typing import Final
 import game_manager
+import player
+import asset_handler
 
+pygame.init()
+
+# LOAD GAME ASSETS
+assets = asset_handler.AssetHandler()
+if not assets.load_images():
+    pygame.quit()
+    exit()
 
 # INIT VARIABLES
-pygame.init()
 clock = pygame.time.Clock()
 SCREEN_WIDTH: Final[int] = 1080
 SCREEN_HEIGHT: Final[int] = 720
@@ -13,9 +21,8 @@ running: bool = True
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Farm Wars")
 canvas = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-player = pygame.Rect((10, 10, 50, 50))
 BLACK: Final[tuple] = (0, 0, 0)
-
+user: player.Player = player.Player(10, 10, assets.player_image, 300)
 velocity: int = 300
 last_time: float = time.time()
 current_time: float = 0.0
@@ -30,15 +37,13 @@ while running:
     current_time = time.time()
     dt = current_time - last_time
     last_time = current_time
-    dt_velocity = velocity * dt
 
     # FILL SCREEN BLACK
     screen.fill(BLACK)
     canvas.fill(BLACK)
 
-    # DRAW RECT TO REPRESENT PLAYER
-    pygame.draw.rect(canvas, (255, 0, 0), player)
-    player.move_ip(game_manager.get_movement_from_keyboard(dt_velocity))
+    user.update(dt)
+    user.draw(canvas)
 
     # CHECK GAME EVENTS
     for event in pygame.event.get():
