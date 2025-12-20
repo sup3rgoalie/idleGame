@@ -3,6 +3,7 @@ import time
 from typing import Final
 import game_manager
 
+
 # INIT VARIABLES
 pygame.init()
 clock = pygame.time.Clock()
@@ -49,5 +50,7 @@ while running:
     # UPDATE THE DISPLAY
     pygame.display.update()
 
+def test_function():
+    will_this_show_up = True
 # QUIT GAME
 pygame.quit()
