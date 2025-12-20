@@ -1,5 +1,5 @@
-
-def get_movement(pygame, dt_velocity) -> tuple:
+import pygame
+def get_movement_from_keyboard(dt_velocity: float) -> tuple[float, float]:
     key = pygame.key.get_pressed()
     if key[pygame.K_a]:
         return -1 * dt_velocity, 0

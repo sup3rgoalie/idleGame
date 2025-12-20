@@ -11,6 +11,7 @@ SCREEN_WIDTH: Final[int] = 1080
 SCREEN_HEIGHT: Final[int] = 720
 running: bool = True
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Farm Wars")
 canvas = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 player = pygame.Rect((10, 10, 50, 50))
 BLACK: Final[tuple] = (0, 0, 0)
@@ -37,20 +38,19 @@ while running:
 
     # DRAW RECT TO REPRESENT PLAYER
     pygame.draw.rect(canvas, (255, 0, 0), player)
-    player.move_ip(game_manager.get_movement(pygame, dt_velocity))
+    player.move_ip(game_manager.get_movement_from_keyboard(dt_velocity))
 
     # CHECK GAME EVENTS
     for event in pygame.event.get():
-
         # STOP GAME LOOP IF WINDOW IS CLOSED/ GAME IS QUIT
         if event.type == pygame.QUIT:
             running = False
+            break
 
-    screen.blit(canvas, (0, 0))
     # UPDATE THE DISPLAY
+    screen.blit(canvas, (0, 0))
     pygame.display.update()
 
-def test_function():
-    will_this_show_up = True
+
 # QUIT GAME
 pygame.quit()
