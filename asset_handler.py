@@ -1,17 +1,17 @@
-from asyncio.windows_events import NULL
-from traceback import print_exception
-
+from plistlib import InvalidFileException
 import pygame
 
 class AssetHandler:
-    def __init__(self):
+    def __init__(self) -> None:
         self.player_image: pygame.Surface = None
 
-    def load_images(self) -> bool:
+    def load_images(self) -> None:
         try:
             self.player_image = pygame.image.load("assets/player_placeholder.png")
-
-            return True
+            exit()
         except FileNotFoundError:
             print("FILE NOT FOUND, FATAL ERROR")
-            return False
+            exit()
+        except InvalidFileException:
+            print("INVALID FILE, FATAL ERROR")
+            exit()

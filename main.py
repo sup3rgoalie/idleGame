@@ -9,9 +9,7 @@ pygame.init()
 
 # LOAD GAME ASSETS
 assets = asset_handler.AssetHandler()
-if not assets.load_images():
-    pygame.quit()
-    exit()
+assets.load_images()
 
 # INIT VARIABLES
 clock = pygame.time.Clock()
