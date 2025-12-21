@@ -8,7 +8,7 @@ class AssetHandler:
     def load_images(self) -> None:
         try:
             self.player_image = pygame.image.load("assets/player_placeholder.png")
-            exit()
+
         except FileNotFoundError:
             print("FILE NOT FOUND, FATAL ERROR")
             exit()
