@@ -14,7 +14,11 @@ class Plant:
         if self._plant_type == "wheat":
             self._images: dict[str, pygame.Surface] = game.assets.wheat_plant_images
             self._image: pygame.Surface = self._images["wheat_0"]
-            self._grow_time: int = 15
+            self._grow_time: int = 1
+
+    def get_plant_type(self) -> str:
+        return self._plant_type
+
 
     def update(self) -> None:
         if not self.can_be_harvested:
@@ -24,7 +28,6 @@ class Plant:
                 self._image: pygame.Surface = self._images["wheat_2"]
                 self.can_be_harvested = True
             self._growth_timer += 1
-
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(self._image, self._position)

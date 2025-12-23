@@ -1,17 +1,21 @@
 import math
 import pygame
 import time
-from typing import Final
+from typing import Final, no_type_check
 
 import entity
+import key_handler
 import player
 import asset_handler
 import world_manager
 
+def check_collision(user: player.Player, entity_list: list[entity.Entity]) -> None:
+    for e in entity_list:
+        if user.get_hitbox().colliderect(e.get_hitbox()):
+            e.collide_logic(user)
 
 # GETS MOVEMENT FROM KEYBOARD FOR THE PLAYER
-def get_movement_from_keyboard(dt_velocity: float) -> tuple[float, float]:
-    key = pygame.key.get_pressed()
+def get_movement_from_keyboard(dt_velocity: float, game: Game) -> tuple[float, float]:
 
     # DIAGONAL MOVEMENT FACTOR FOR 8 DIRECTION MOVEMENT
     diagonal_movement_factor: float = (math.sqrt(2) / 2)
@@ -19,13 +23,13 @@ def get_movement_from_keyboard(dt_velocity: float) -> tuple[float, float]:
     # CHANGE VELOCITY BASED ON KEY PRESSED
     velo_x: float = 0
     velo_y: float = 0
-    if key[pygame.K_a]:
+    if game.key_h.a_pressed:
         velo_x = -dt_velocity
-    if key[pygame.K_d]:
+    if game.key_h.d__pressed:
         velo_x = dt_velocity
-    if key[pygame.K_w]:
+    if game.key_h.w_pressed:
         velo_y = -dt_velocity
-    if key[pygame.K_s]:
+    if game.key_h.s_pressed:
         velo_y = dt_velocity
 
     # MULTIPLY VELOCITY BY DIAGONAL FACTOR IF MOVING IN BOTH X AND Y AXIS
@@ -37,7 +41,7 @@ def get_movement_from_keyboard(dt_velocity: float) -> tuple[float, float]:
 
 # RENDER TEXT TO THE GAME SCREEN
 def render_text(text: str, color: tuple, pos: tuple[int, int], font: pygame.Font, screen: pygame.Surface) -> None:
-    text_to_draw: pygame.Surface = font.render(text, False, pygame.Color(color))
+    text_to_draw: pygame.Surface = font.render(text, True, pygame.Color(color))
     screen.blit(text_to_draw, (pos[0], pos[1]))
 
 class Game:
@@ -58,10 +62,11 @@ class Game:
         pygame.display.set_caption("Farm Wars")
         self.canvas = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.BLACK: Final[tuple] = (0, 0, 0)
+        self.text_font = pygame.font.SysFont("Arial", 48, True)
 
-        self.user: player.Player = player.Player(10, 10, self.assets.player_images, 300)
+        self.user: player.Player = player.Player(10, 10, self.assets.player_images, 300, self)
         self.w_manager = world_manager.WorldManager("world_files", self)
-
+        self.key_h: key_handler.KeyHandler = key_handler.KeyHandler(self)
         self.last_time: float = time.time()
         self.current_time: float = 0.0
         self.dt: float = 0
@@ -89,9 +94,10 @@ class Game:
             self.screen.fill(self.BLACK)
             self.canvas.fill(self.BLACK)
 
+            self.key_h.get_key_pressed()
             # DRAW CURRENT WORLD
             self.w_manager.draw_world("world_0", self.canvas)
-
+            check_collision(self.user, self.entity_list)
             for e in self.entity_list:
                 e.update()
                 e.draw(self.canvas)
@@ -99,7 +105,7 @@ class Game:
 
             self.user.update(self.dt)
             self.user.draw(self.canvas)
-
+            render_text(f"{self.user.inventory["wheat"]}", self.BLACK,(40,40), self.text_font ,self.canvas)
             # CHECK GAME EVENTS
             for event in pygame.event.get():
                 # STOP GAME LOOP IF WINDOW IS CLOSED/ GAME IS QUIT
