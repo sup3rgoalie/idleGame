@@ -1,3 +1,4 @@
+import math
 import pygame
 import time
 from typing import Final
@@ -7,16 +8,27 @@ import world_manager
 
 def get_movement_from_keyboard(dt_velocity: float) -> tuple[float, float]:
     key = pygame.key.get_pressed()
+    dual_key_velocity: float = dt_velocity * (math.sqrt(2) / 2)
+    velo_x: float = 0
+    velo_y: float = 0
     if key[pygame.K_a]:
-        return -1 * dt_velocity, 0
-    elif key[pygame.K_d]:
-        return dt_velocity, 0
-    elif key[pygame.K_w]:
-        return 0, -1 * dt_velocity
-    elif key[pygame.K_s]:
-        return 0, dt_velocity
-    else:
-        return 0, 0
+        velo_x = -dt_velocity
+    if key[pygame.K_d]:
+        velo_x = dt_velocity
+    if key[pygame.K_w]:
+        velo_y = -dt_velocity
+    if key[pygame.K_s]:
+        velo_y = dt_velocity
+
+    if velo_x != 0 and velo_y != 0:
+        velo_x *= (math.sqrt(2) / 2)
+        velo_y *= (math.sqrt(2) / 2)
+
+    return round(velo_x), round(velo_y)
+
+def render_text(text: str, color: tuple, pos: tuple[int, int], font: pygame.Font, screen: pygame.Surface) -> None:
+    text_to_draw: pygame.Surface = font.render(text, False, pygame.Color(color))
+    screen.blit(text_to_draw, (pos[0], pos[1]))
 
 class Game:
     def __init__(self):
@@ -50,7 +62,7 @@ class Game:
         while self.running:
 
             # CALCULATE DELTA TIME
-            self.clock.tick(self.FPS)
+            self.clock.tick(60)
             self.current_time = time.time()
             self.dt = self.current_time - self.last_time
             self.last_time = self.current_time
@@ -71,8 +83,10 @@ class Game:
                     self.running = False
                     break
 
+
             # UPDATE THE DISPLAY
             self.screen.blit(self.canvas, (0, 0))
+
             pygame.display.update()
 
         # QUIT GAME

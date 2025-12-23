@@ -1,8 +1,6 @@
 import os
 import pygame
-
 import game_manager
-
 
 # FUNCTION THAT READS A MAP LAYOUT FILE, A 2D LIST OF INTS
 # input: file path for layout file
