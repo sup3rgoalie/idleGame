@@ -38,7 +38,7 @@ def _read_config_file(file_path: str, game: game_manager.Game) -> list[entity.En
             if line_elements[0] == "farm":
                 pos_x: int = int(line_elements[1]) * game.TILE_SIZE
                 pos_y: int = int(line_elements[2]) * game.TILE_SIZE
-                temp_farmland: farmland.Farmland = farmland.Farmland(pos_x, pos_y, game.assets.player_image, game)
+                temp_farmland: farmland.Farmland = farmland.Farmland(pos_x, pos_y, game.assets.player_images, game)
                 file_entity_list.append(temp_farmland)
                 print(f"farm created at {pos_x}, {pos_y}")
 

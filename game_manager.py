@@ -59,7 +59,7 @@ class Game:
         self.canvas = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.BLACK: Final[tuple] = (0, 0, 0)
 
-        self.user: player.Player = player.Player(10, 10, self.assets.player_image, 300)
+        self.user: player.Player = player.Player(10, 10, self.assets.player_images, 300)
         self.w_manager = world_manager.WorldManager("world_files", self)
 
         self.last_time: float = time.time()
@@ -94,6 +94,7 @@ class Game:
 
             for e in self.entity_list:
                 e.draw(self.canvas)
+                # DEBUG pygame.draw.rect(self.canvas, pygame.Color("white"), e.get_hitbox())
 
             self.user.update(self.dt)
             self.user.draw(self.canvas)
