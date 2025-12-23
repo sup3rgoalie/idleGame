@@ -1,14 +1,10 @@
+import copy
 import os
 import pygame
-import asset_handler
+import entity
 import world
 import game_manager
 
-# DRAW WORLD ONTO THE SCREEN
-def draw_world(wrld: world.World, a_handler: asset_handler.AssetHandler, screen: pygame.Surface, tile_size: int) -> None:
-
-    # ITERATE THROUGH THE WORLD LAYOUT FILE, DRAW TILES TO SCREEN
-    screen.blit(wrld.world_surface, (0,0))
 
 # LOAD WORLDS AND SAVE THEM IN A DICT[world name, world]
 def _load_worlds(world_files_path: str, game: game_manager.Game) -> dict[str, world.World]:
@@ -24,14 +20,24 @@ def _load_worlds(world_files_path: str, game: game_manager.Game) -> dict[str, wo
 
 class WorldManager:
     def __init__(self, world_files_path: str, game: game_manager.Game) -> None:
-        self.game: game_manager.Game = game
-        self.worlds: dict[str, world.World] = _load_worlds(world_files_path, game)
+        self._game: game_manager.Game = game
+        self._worlds: dict[str, world.World] = _load_worlds(world_files_path, game)
+
+    # GET A COPY OF THE WORLDS ENTITIES
+    def load_world_entities(self, world_name: str) -> list[entity.Entity]:
+        return copy.deepcopy(self._worlds[world_name].entities)
+
+    # DRAW WORLD ONTO THE SCREEN
+    def draw_world(self, world_name: str, screen: pygame.Surface) -> None:
+
+        screen.blit(self._worlds.get(world_name).world_surface, (0, 0))
 
 
 # UNIT TEST
 if __name__ == "__main__":
-    world_manager_test = WorldManager("test_files/test_world_file_dirct")
-    print(world_manager_test.worlds['test_world_1'])
-    print(world_manager_test.worlds['test_world_1'].layout)
-    print(world_manager_test.worlds['test_world_2'])
-    print(world_manager_test.worlds['test_world_2'].layout)
+    test_game: game_manager.Game = game_manager.Game()
+    world_manager_test = WorldManager("test_files/test_world_file_dirct", test_game)
+    print(world_manager_test._worlds['test_world_1'])
+    print(world_manager_test._worlds['test_world_1'].layout)
+    print(world_manager_test._worlds['test_world_2'])
+    print(world_manager_test._worlds['test_world_2'].layout)

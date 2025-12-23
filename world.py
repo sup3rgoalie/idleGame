@@ -1,5 +1,8 @@
 import os
 import pygame
+
+import entity
+import farmland
 import game_manager
 
 # FUNCTION THAT READS A MAP LAYOUT FILE, A 2D LIST OF INTS
@@ -8,6 +11,8 @@ import game_manager
 def _read_layout_file(file_path: str) -> list[list[str]]:
     map_layout: list[list[str]] = []
     # OPEN WORLD LAYOUT FILE
+    print(f"Reading layout file {file_path}")
+
     with open(file_path, "r") as file:
         file_contents: list[str] = file.readlines()
         # PARSE FILE CONTENTS
@@ -18,10 +23,27 @@ def _read_layout_file(file_path: str) -> list[list[str]]:
     # RETURN MAP LAYOUT AS 2D ARRAY
     return map_layout
 
-def _read_config_file(file_path: str) -> None:
+# READ CONFIG FILE FOR WORLD
+def _read_config_file(file_path: str, game: game_manager.Game) -> list[entity.Entity]:
     # OPEN WORLD CONFIG FILE
+    file_entity_list: list[entity.Entity] = []
     with open(file_path, "r") as file:
         file_contents: list[str] = file.readlines()
+
+        for line in file_contents:
+            line = line.strip()
+            line_elements: list[str] = line.split(" ")
+
+            # CREATE FARMLAND OBJECT
+            if line_elements[0] == "farm":
+                pos_x: int = int(line_elements[1]) * game.TILE_SIZE
+                pos_y: int = int(line_elements[2]) * game.TILE_SIZE
+                temp_farmland: farmland.Farmland = farmland.Farmland(pos_x, pos_y, game.assets.player_image, game)
+                file_entity_list.append(temp_farmland)
+                print(f"farm created at {pos_x}, {pos_y}")
+
+    return file_entity_list
+
 
 # CREATES A SURFACE WITH WORLDS TILES
 def _create_world_surface(layout: list[list[str]], game: game_manager.Game) -> pygame.Surface:
@@ -39,9 +61,13 @@ class World:
         self.name: str = name
         self.game: game_manager.Game = game
         self.world_files: list[str] = os.listdir(world_folder_path)
-        self.layout: list[list[str]] = _read_layout_file(f"{world_folder_path}/{self.world_files[0]}")
+        for file in self.world_files:
+            if file.find("layout") != -1:
+                self.layout: list[list[str]] = _read_layout_file(os.path.join(world_folder_path, file))
+            if file.find("config") != -1:
+                self.entities: list[entity.Entity] = _read_config_file(os.path.join(world_folder_path, file), game)
         self.world_surface: pygame.Surface = _create_world_surface(self.layout, self.game)
-        print(game.TILE_SIZE)
+
 
     def __str__(self) -> str:
         return self.name

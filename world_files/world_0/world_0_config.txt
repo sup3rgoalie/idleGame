@@ -1,0 +1,6 @@
+farm 3 3
+farm 4 3
+farm 5 3
+farm 6 3
+farm 10 10
+shop 8 8
