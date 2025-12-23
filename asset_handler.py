@@ -4,10 +4,15 @@ import pygame
 class AssetHandler:
     def __init__(self) -> None:
         self.player_image: pygame.Surface = None
+        self.tile_test: pygame.Surface = None
 
     def load_images(self) -> None:
         try:
             self.player_image = pygame.image.load("assets/player_placeholder.png")
+            self.player_image = pygame.transform.scale(self.player_image, (64, 64))
+
+            self.tile_test = pygame.image.load("assets/tile_png_folder/test_tile.png")
+            self.tile_test = pygame.transform.scale(self.tile_test, (64, 64))
 
         except FileNotFoundError:
             print("FILE NOT FOUND, FATAL ERROR")

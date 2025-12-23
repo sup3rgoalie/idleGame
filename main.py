@@ -4,6 +4,7 @@ from typing import Final
 import game_manager
 import player
 import asset_handler
+import world_manager
 
 pygame.init()
 
@@ -13,14 +14,17 @@ assets.load_images()
 
 # INIT VARIABLES
 clock = pygame.time.Clock()
-SCREEN_WIDTH: Final[int] = 1080
-SCREEN_HEIGHT: Final[int] = 720
+SCREEN_WIDTH: Final[int] = 1024
+SCREEN_HEIGHT: Final[int] = 768
+TILE_SIZE: Final[int] = 64
 running: bool = True
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Farm Wars")
 canvas = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 BLACK: Final[tuple] = (0, 0, 0)
+
 user: player.Player = player.Player(10, 10, assets.player_image, 300)
+w_manager = world_manager.WorldManager("world_files")
 velocity: int = 300
 last_time: float = time.time()
 current_time: float = 0.0
@@ -39,6 +43,8 @@ while running:
     # FILL SCREEN BLACK
     screen.fill(BLACK)
     canvas.fill(BLACK)
+
+    world_manager.draw_world(w_manager.worlds["world_0"], assets, canvas, TILE_SIZE)
 
     user.update(dt)
     user.draw(canvas)
