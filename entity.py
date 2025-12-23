@@ -8,17 +8,9 @@ class Entity:
         self._images: dict[str, pygame.Surface] = images
         self._hitbox: pygame.Rect = pygame.Rect(self._x + 16, self._y + 16, 96, 96)
 
-    # UPDATE ENTITY OBJECT
-    def update(self, dt: float) -> None:
-        pass
-
-    # DRAW ENTITY OBJECT
-    def draw(self, screen: pygame.Surface) -> None:
-        pass
-
     # GET ENTITY POSITION
-    def get_position(self) -> tuple[float, float]:
-        return self._x, self._y
+    def get_position(self) -> tuple[int, int]:
+        return int(self._x), int(self._y)
 
     # GET ENTITY HITBOX
     def get_hitbox(self) -> pygame.Rect:

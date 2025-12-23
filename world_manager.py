@@ -25,7 +25,7 @@ class WorldManager:
 
     # GET A COPY OF THE WORLDS ENTITIES
     def load_world_entities(self, world_name: str) -> list[entity.Entity]:
-        return copy.deepcopy(self._worlds[world_name].entities)
+        return self._worlds[world_name].entities.copy()
 
     # DRAW WORLD ONTO THE SCREEN
     def draw_world(self, world_name: str, screen: pygame.Surface) -> None:

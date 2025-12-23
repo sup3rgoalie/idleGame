@@ -93,6 +93,7 @@ class Game:
             self.w_manager.draw_world("world_0", self.canvas)
 
             for e in self.entity_list:
+                e.update()
                 e.draw(self.canvas)
                 # DEBUG pygame.draw.rect(self.canvas, pygame.Color("white"), e.get_hitbox())
 
