@@ -8,7 +8,7 @@ class Player(entity.Entity):
         super().__init__(x, y, images)
         self._velocity = velocity
         self.set_hitbox((16, 8), (32, 48))
-        self._image = self.images["player"]
+        self._image = self._images["player"]
 
     # UPDATE PLAYER
     def update(self, dt: float) -> None:

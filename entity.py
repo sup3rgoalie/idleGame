@@ -5,7 +5,7 @@ class Entity:
     def __init__(self, x: float, y: float, images: dict[str, pygame.Surface]) -> None:
         self._x: float = x
         self._y: float = y
-        self.images: dict[str, pygame.Surface] = images
+        self._images: dict[str, pygame.Surface] = images
         self._hitbox: pygame.Rect = pygame.Rect(self._x + 16, self._y + 16, 96, 96)
 
     # UPDATE ENTITY OBJECT
