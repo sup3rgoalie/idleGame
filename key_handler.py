@@ -12,6 +12,7 @@ class KeyHandler:
         self.a_pressed: bool = False
         self.enter_pressed: bool = False
         self.space_pressed: bool = False
+        self.exit_pressed: bool = False
 
     def get_key_pressed(self) -> None:
 
@@ -46,3 +47,8 @@ class KeyHandler:
             self.space_pressed = True
         else:
             self.space_pressed = False
+
+        if key[pygame.K_ESCAPE]:
+            self.exit_pressed = True
+        else:
+            self.exit_pressed = False

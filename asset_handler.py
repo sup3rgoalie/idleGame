@@ -6,6 +6,7 @@ class AssetHandler:
         self.player_images: dict[str, pygame.Surface] = {}
         self.farmland_images: dict[str, pygame.Surface] = {}
         self.wheat_plant_images: dict[str, pygame.Surface] = {}
+        self.ui_elements: dict[str, pygame.Surface] = {}
         self.tile_test: pygame.Surface = None
 
     def load_images(self) -> None:
@@ -16,6 +17,7 @@ class AssetHandler:
 
             farmland_healthy_image = pygame.image.load("assets/plant_images/farmland.png")
             farmland_healthy_image = pygame.transform.scale(farmland_healthy_image, (64, 64))
+            self.farmland_images["farmland_healthy"] = farmland_healthy_image
 
             wheat_image_0 = pygame.image.load("assets/plant_images/wheat_0.png")
             wheat_image_0 = pygame.transform.scale(wheat_image_0, (64, 64))
@@ -29,10 +31,12 @@ class AssetHandler:
             wheat_image_2 = pygame.transform.scale(wheat_image_2, (64, 64))
             self.wheat_plant_images["wheat_2"] = wheat_image_2
 
-
-            self.farmland_images["farmland_healthy"] = farmland_healthy_image
             self.tile_test = pygame.image.load("assets/tile_png_folder/test_tile.png")
             self.tile_test = pygame.transform.scale(self.tile_test, (64, 64))
+
+            ui_item_bar = pygame.image.load("assets/ui_elements/item_bar.png")
+            ui_item_bar = pygame.transform.scale(ui_item_bar, (ui_item_bar.get_width() * 3, ui_item_bar.get_height() * 3))
+            self.ui_elements["item_bar"] = ui_item_bar
 
         except FileNotFoundError:
             print("FILE NOT FOUND, FATAL ERROR")

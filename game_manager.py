@@ -8,6 +8,8 @@ import key_handler
 import player
 import asset_handler
 import world_manager
+from ui import UI
+
 
 def check_collision(user: player.Player, entity_list: list[entity.Entity]) -> None:
     for e in entity_list:
@@ -72,7 +74,9 @@ class Game:
         self.dt: float = 0
         self.FPS: int = 60
         self.game_states: list[str] = ["PLAY", "MAIN_MENU", "INVENTORY"]
+        self.game_state: str = self.game_states[0]
         self.entity_list: list[entity.Entity] = []
+        self.ui: UI = UI(self)
 
         temp_list = self.w_manager.load_world_entities("world_0")
         for e in temp_list:
@@ -105,14 +109,15 @@ class Game:
 
             self.user.update(self.dt)
             self.user.draw(self.canvas)
-            render_text(f"{self.user.inventory["wheat"]}", self.BLACK,(40,40), self.text_font ,self.canvas)
+
             # CHECK GAME EVENTS
             for event in pygame.event.get():
                 # STOP GAME LOOP IF WINDOW IS CLOSED/ GAME IS QUIT
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT or self.key_h.exit_pressed:
                     self.running = False
                     break
 
+            self.ui.update()
 
             # UPDATE THE DISPLAY
             self.screen.blit(self.canvas, (0, 0))
