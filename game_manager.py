@@ -41,11 +41,6 @@ def get_movement_from_keyboard(dt_velocity: float, game: Game) -> tuple[float, f
 
     return round(velo_x), round(velo_y)
 
-# RENDER TEXT TO THE GAME SCREEN
-def render_text(text: str, color: tuple, pos: tuple[int, int], font: pygame.Font, screen: pygame.Surface) -> None:
-    text_to_draw: pygame.Surface = font.render(text, True, pygame.Color(color))
-    screen.blit(text_to_draw, (pos[0], pos[1]))
-
 class Game:
     def __init__(self):
         pygame.init()

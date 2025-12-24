@@ -1,5 +1,12 @@
 import game_manager
-# CREATE GAME OBJECT
-game = game_manager.Game()
-# RUN GAME
-game.run()
+
+def main():
+    # CREATE GAME OBJECT
+    game = game_manager.Game()
+    # RUN GAME
+    game.run()
+
+if __name__ == '__main__':
+    main()
+
+
