@@ -2,6 +2,7 @@ farm 3 3
 farm 4 3
 farm 5 3
 farm 6 3
-farm 10 10
-farm 1 1
+farm 7 3
+farm 8 3
+farm 9 3
 shop 8 8
