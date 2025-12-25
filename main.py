@@ -1,7 +1,7 @@
 import game_manager
 
 def main():
-    # CREATE GAME OBJECT
+    # CREATE GAME OBJECTs
     game = game_manager.Game()
     # RUN GAME
     game.run()

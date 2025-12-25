@@ -42,6 +42,10 @@ class AssetHandler:
             ui_wheat_icon = pygame.transform.scale(ui_wheat_icon, (24, 27))
             self.ui_elements["wheat_icon"] = ui_wheat_icon
 
+            ui_farm_popup_image = pygame.image.load("assets/ui_elements/farm_popup.png")
+            ui_farm_popup_image = pygame.transform.scale(ui_farm_popup_image, (96, 96))
+            self.ui_elements["farm_popup"] = ui_farm_popup_image
+
         except FileNotFoundError:
             print("FILE NOT FOUND, FATAL ERROR")
             exit()

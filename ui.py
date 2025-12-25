@@ -1,5 +1,6 @@
 import pygame
 
+import farmland
 import game_manager
 
 # RENDER TEXT TO THE GAME SCREEN
@@ -28,10 +29,23 @@ class UI:
                     self.game.canvas.blit(item[0], item[1])
         self.outside_items_to_display.clear()
 
-    def add_farm_popup_to_ui(self, text: str, position: tuple[int, int], size: tuple[int, int]) -> None:
-        text_box = pygame.Rect(0, 0, size[0], size[1])
-        text_box_surface = pygame.Surface(text_box.size)
-        text_box_surface.fill(pygame.Color("black"))
-        pygame.draw.rect(text_box_surface, pygame.Color("green"), text_box, 5)
-        self.outside_items_to_display.append((text_box_surface, position))
+    def add_farm_popup_to_ui(self, position: tuple[int, int], calling_farmland: farmland.Farmland) -> None:
+        farm_popup_font: pygame.font.Font = pygame.font.SysFont("Arial", 18, True)
+        farm_popup_surface: pygame.Surface = pygame.Surface((96, 96))
+        farm_popup_surface.blit(self._ui_elements["farm_popup"], (0,0))
+        farm_popup_surface.set_colorkey((0,0,0))
+        farm_land_plant = calling_farmland.get_plant()
+        if farm_land_plant is not None:
+            if farm_land_plant.get_plant_type() == "wheat":
+                farm_popup_surface.blit(self._ui_elements["wheat_icon"], (12,12))
+                render_text("Wheat", pygame.Color("white"), (32, 16), farm_popup_font, farm_popup_surface)
+                if farm_land_plant.can_be_harvested:
+                    render_text("Ready!", pygame.Color("white"), (24, 54), farm_popup_font, farm_popup_surface)
+                else:
+                    growth_count_font: pygame.Font = pygame.font.SysFont("Arial", 14, True)
+                    current_growth_count: str = f"Seconds\nleft: {round((farm_land_plant.grow_time * 60 - farm_land_plant.growth_timer) / 60)}"
+                    render_text(current_growth_count, pygame.Color("white"), (18, 48), growth_count_font, farm_popup_surface)
+        else:
+            render_text("Empty", pygame.Color("white"), (26, 18), farm_popup_font, farm_popup_surface)
+        self.outside_items_to_display.append((farm_popup_surface, position))
 
