@@ -1,8 +1,6 @@
 import math
 import pygame
 import time
-from typing import Final, no_type_check
-
 import entity
 import key_handler
 import player
