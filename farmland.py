@@ -26,7 +26,8 @@ class Farmland(entity.Entity):
             self._plant.draw(screen)
 
     def collide_logic(self, e: Entity) -> None:
-        if isinstance(e, player.Player):
+        if isinstance(e, player.Player) and not e.interacting:
+            e.interacting = True
             if self._plant is not None:
                 if self._plant.can_be_harvested and self._game.key_h.enter_pressed:
                     e.inventory[self._plant.get_plant_type()] += 1

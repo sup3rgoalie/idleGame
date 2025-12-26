@@ -31,7 +31,7 @@ class Entity:
     def get_image(self) -> pygame.Surface:
         return self._image
 
-    def collide_logic(self, e: Entity) -> bool:
+    def collide_logic(self, e: Entity) -> None:
         pass
 
     # SET ENTITY POSITION, AS WELL AS UPDATE HITBOX TO NEW POSITION
@@ -42,6 +42,14 @@ class Entity:
 
         self._y += velo_change[1]
         self._hitbox.y += velo_change[1]
+
+    def set_positon(self, x: int, y: int) -> None:
+        hitbox_offset_x: int = self._hitbox.x - self._x
+        hitbox_offset_y: int = self._hitbox.y - self._y
+        self._x = x
+        self._y = y
+        self._hitbox.x = self._x + hitbox_offset_x
+        self._hitbox.y = self._y + hitbox_offset_y
 
     def set_hitbox(self, offset: tuple[int, int], size: tuple[int, int]) -> None:
         self._hitbox = pygame.Rect(self._x + offset[0], self._y + offset[1], size[0], size[1])

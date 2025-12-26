@@ -1,6 +1,8 @@
 import copy
 import os
 import pygame
+
+import change_world_event
 import entity
 import world
 import game_manager
@@ -22,10 +24,25 @@ class WorldManager:
     def __init__(self, world_files_path: str, game: game_manager.Game) -> None:
         self._game: game_manager.Game = game
         self._worlds: dict[str, world.World] = _load_worlds(world_files_path, game)
+        self.current_world: world.World = None
+        self.current_entity_list: list[entity.Entity] = []
+        self.change_world("world_0")
+
 
     # GET A COPY OF THE WORLDS ENTITIES
     def load_world_entities(self, world_name: str) -> list[entity.Entity]:
         return self._worlds[world_name].entities.copy()
+
+    def change_world(self, world_name: str):
+        self.current_world = self._worlds[world_name]
+        if len(self.current_world.entities) > 0:
+            for e in self.current_entity_list:
+                if isinstance(e, change_world_event.ChangeWorldEvent):
+                    e.loaded = False
+        self.current_entity_list = self.current_world.entities
+        for e in self.current_entity_list:
+            if isinstance(e, change_world_event.ChangeWorldEvent):
+                e.loaded = True
 
     # DRAW WORLD ONTO THE SCREEN
     def draw_world(self, world_name: str, screen: pygame.Surface) -> None:

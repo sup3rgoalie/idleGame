@@ -10,10 +10,13 @@ class Player(entity.Entity):
         self.set_hitbox((16, 8), (32, 48))
         self._image = self._images["player"]
         self._can_move = True
+        self.interacting = False
         self.inventory: dict[str, int] = {"wheat": 10000, "carrot": 1000, "corn": 1000, "tomato": 1000}
 
     # UPDATE PLAYER
     def update(self, dt: float) -> None:
+        self.interacting = False
+        game_manager.check_collision(self, self._game.w_manager.current_entity_list)
         dt_velocity = self._velocity * dt
         velo_x, velo_y = game_manager.get_movement_from_keyboard(dt_velocity, self._game)
 
@@ -22,6 +25,8 @@ class Player(entity.Entity):
     # DRAW PLAYER
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(self._image, (self._x, self._y))
+        # DEBUG pygame.draw.rect(screen, pygame.Color("black"), self._hitbox)
+
 
     def update_position(self, velo_change: tuple[float, float]) -> None:
         new_x: float = self._x + velo_change[0]

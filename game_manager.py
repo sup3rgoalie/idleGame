@@ -73,7 +73,6 @@ class Game:
         self.entity_list: list[entity.Entity] = []
         self.ui: UI = UI(self)
 
-        self.current_world: world.World = self.w_manager.get_worlds()["world_0"]
 
 
     # MAIN GAME LOOP FUNCTION
@@ -93,12 +92,13 @@ class Game:
 
             self.key_h.get_key_pressed()
             # DRAW CURRENT WORLD
-            self.w_manager.draw_world(self.current_world.name, self.canvas)
+            self.w_manager.draw_world(self.w_manager.current_world.name, self.canvas)
 
-            check_collision(self.user, self.current_world.entities)
+            for world_name in self.w_manager.get_worlds():
+                for e in self.w_manager.get_worlds()[world_name].entities:
+                    e.update()
 
-            for e in self.current_world.entities:
-                e.update()
+            for e in self.w_manager.current_world.entities:
                 e.draw(self.canvas)
 
             self.user.update(self.dt)
