@@ -20,9 +20,29 @@ class UI:
     def update(self) -> None:
 
         if self.game.game_state == "PLAY":
+
+            # DRAW ITEM BAR
             self.game.canvas.blit(self._ui_elements["item_bar"], (20, 20))
-            render_text(f"{self.game.user.inventory["wheat"]}", pygame.Color("white"), (56, 32), self.ui_font, self.game.canvas)
-            self.game.canvas.blit(self._ui_elements["wheat_icon"], (36, 32))
+            icon_x, text_x = 36, 58
+            icon_y, text_y = 36, 32
+            x_offset_per_item: int = 90
+            for crop_type in self.game.user.inventory:
+                if self.game.user.inventory[crop_type] > 9999:
+                    adjusted_count_str: str = f"{round(self.game.user.inventory[crop_type] / 1000)}K"
+                    render_text(adjusted_count_str, pygame.Color("white"), (text_x, text_y), self.ui_font,
+                                self.game.canvas)
+                else:
+                    render_text(f"{self.game.user.inventory[crop_type]}", pygame.Color("white"), (text_x, text_y), self.ui_font,
+                                self.game.canvas)
+                if crop_type == "wheat":
+                    icon_y -= 2
+                    self.game.canvas.blit(self._ui_elements[f"{crop_type}_icon"], (icon_x, icon_y))
+                    icon_y += 2
+                else:
+                    self.game.canvas.blit(self._ui_elements[f"{crop_type}_icon"], (icon_x, icon_y))
+                text_x += x_offset_per_item
+                icon_x += x_offset_per_item
+
 
             if len(self.outside_items_to_display) > 0:
                 for item in self.outside_items_to_display:
@@ -43,7 +63,7 @@ class UI:
                     render_text("Ready!", pygame.Color("white"), (24, 54), farm_popup_font, farm_popup_surface)
                 else:
                     growth_count_font: pygame.Font = pygame.font.SysFont("Arial", 14, True)
-                    current_growth_count: str = f"Seconds\nleft: {round((farm_land_plant.grow_time * 60 - farm_land_plant.growth_timer) / 60)}"
+                    current_growth_count: str = f"Seconds\nleft: {round((farm_land_plant.grow_time * 60 - farm_land_plant.growth_timer) / 60 + 0.5)}"
                     render_text(current_growth_count, pygame.Color("white"), (18, 48), growth_count_font, farm_popup_surface)
         else:
             render_text("Empty", pygame.Color("white"), (26, 18), farm_popup_font, farm_popup_surface)

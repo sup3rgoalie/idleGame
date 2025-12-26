@@ -10,7 +10,7 @@ class Player(entity.Entity):
         self.set_hitbox((16, 8), (32, 48))
         self._image = self._images["player"]
         self._can_move = True
-        self.inventory: dict[str, int] = {"wheat": 0}
+        self.inventory: dict[str, int] = {"wheat": 10000, "carrot": 1000, "corn": 1000, "tomato": 1000}
 
     # UPDATE PLAYER
     def update(self, dt: float) -> None:

@@ -1,4 +1,6 @@
 import math
+from typing import Final
+
 import pygame
 import time
 import entity
@@ -42,20 +44,19 @@ def get_movement_from_keyboard(dt_velocity: float, game: Game) -> tuple[float, f
 class Game:
     def __init__(self):
         pygame.init()
-
+        self.SCREEN_WIDTH: Final[int] = 1024
+        self.SCREEN_HEIGHT: Final[int] = 768
+        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        pygame.display.set_caption("Farm Wars")
+        self.canvas = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         # LOAD GAME ASSETS
         self.assets = asset_handler.AssetHandler()
         self.assets.load_images()
 
         # INIT VARIABLES
         self.clock = pygame.time.Clock()
-        self.SCREEN_WIDTH: Final[int] = 1024
-        self.SCREEN_HEIGHT: Final[int] = 768
         self.TILE_SIZE: Final[int] = 64
         self.running: bool = True
-        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-        pygame.display.set_caption("Farm Wars")
-        self.canvas = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.BLACK: Final[tuple] = (0, 0, 0)
         self.text_font = pygame.font.SysFont("Arial", 48, True)
 
