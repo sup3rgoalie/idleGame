@@ -1,8 +1,5 @@
-farm 3 3
-farm 4 3
-farm 5 3
-farm 6 3
-farm 7 3
-farm 8 3
-farm 9 3
+farm 1 4
+farm 1 5
+farm 2 9
+farm 12 9
 world 0 4 1 2 world_1

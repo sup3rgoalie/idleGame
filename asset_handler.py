@@ -1,3 +1,4 @@
+import os
 from plistlib import InvalidFileException
 import pygame
 
@@ -8,6 +9,7 @@ class AssetHandler:
         self.wheat_plant_images: dict[str, pygame.Surface] = {}
         self.ui_elements: dict[str, pygame.Surface] = {}
         self.tile_test: pygame.Surface = None
+        self.tile_images: dict[str, pygame.Surface] = {}
 
     def load_images(self) -> None:
         try:
@@ -69,6 +71,15 @@ class AssetHandler:
             ui_farm_popup_image.convert_alpha()
             ui_farm_popup_image = pygame.transform.scale(ui_farm_popup_image, (96, 96))
             self.ui_elements["farm_popup"] = ui_farm_popup_image
+
+            tile_images_path = "assets/tile_png_folder"
+            tile_names = os.listdir(tile_images_path)
+            for tile_name in tile_names:
+                name = tile_name.split(".")[0]
+                tile_image = pygame.image.load(os.path.join(tile_images_path, tile_name))
+                tile_image = pygame.transform.scale(tile_image, (64, 64))
+                tile_image.convert_alpha()
+                self.tile_images[name] = tile_image
 
         except FileNotFoundError:
             print("FILE NOT FOUND, FATAL ERROR")
