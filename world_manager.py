@@ -32,6 +32,9 @@ class WorldManager:
 
         screen.blit(self._worlds.get(world_name).world_surface, (0, 0))
 
+    def get_worlds(self) -> dict[str, world.World]:
+        return self._worlds
+
 
 # UNIT TEST
 if __name__ == "__main__":

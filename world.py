@@ -1,6 +1,7 @@
 import os
 import pygame
 
+import change_world_event
 import entity
 import farmland
 import game_manager
@@ -27,7 +28,7 @@ def _read_layout_file(file_path: str) -> list[list[str]]:
 def _read_config_file(file_path: str, game: game_manager.Game) -> list[entity.Entity]:
     # OPEN WORLD CONFIG FILE
     file_entity_list: list[entity.Entity] = []
-    with open(file_path, "r") as file:
+    with (open(file_path, "r") as file):
         file_contents: list[str] = file.readlines()
 
         for line in file_contents:
@@ -38,10 +39,20 @@ def _read_config_file(file_path: str, game: game_manager.Game) -> list[entity.En
             if line_elements[0] == "farm":
                 pos_x: int = int(line_elements[1]) * game.TILE_SIZE
                 pos_y: int = int(line_elements[2]) * game.TILE_SIZE
-                temp_farmland: farmland.Farmland = farmland.Farmland(pos_x, pos_y, game.assets.farmland_images, game)
-                file_entity_list.append(temp_farmland)
+                new_farmland: farmland.Farmland = farmland.Farmland(pos_x, pos_y, game.assets.farmland_images, game)
+                file_entity_list.append(new_farmland)
                 print(f"farm created at {pos_x}, {pos_y}")
 
+            # CREATE WORLD TELEPORT OBJECT
+            elif line_elements[0] == "world":
+                pos_x: int = int(line_elements[1]) * game.TILE_SIZE
+                pos_y: int = int(line_elements[2]) * game.TILE_SIZE
+                size_x: int = int(line_elements[3]) * game.TILE_SIZE
+                size_y: int = int(line_elements[4]) * game.TILE_SIZE
+                world_name: str = str(line_elements[5])
+                new_change_world_event: change_world_event.ChangeWorldEvent = change_world_event.ChangeWorldEvent(pos_x, pos_y, size_x, size_y, world_name, game)
+                file_entity_list.append(new_change_world_event)
+                print(f"world teleport created at {pos_x}, {pos_y}")
     return file_entity_list
 
 
@@ -54,6 +65,7 @@ def _create_world_surface(layout: list[list[str]], game: game_manager.Game) -> p
             screen_y = game.TILE_SIZE * y
             if tile == "0":
                 world_surface.blit(game.assets.tile_test,(screen_x, screen_y))
+    world_surface.convert_alpha()
     return world_surface
 
 class World:

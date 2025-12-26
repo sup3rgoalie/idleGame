@@ -5,12 +5,13 @@ import game_manager
 
 # BASE CLASS FOR ALL ENTITY OBJECTS IN GAME
 class Entity:
-    def __init__(self, x: float, y: float, images: dict[str, pygame.Surface], game: game_manager.Game) -> None:
-        self._x: float = x
-        self._y: float = y
+    def __init__(self, x: int, y: int, game: game_manager.Game, *args) -> None:
+        self._x: int = x
+        self._y: int = y
         self._game = game
         self._can_move = False
-        self._images: dict[str, pygame.Surface] = images
+        if len(args) > 0:
+            self._images: dict[str, pygame.Surface] = args[0]
         self._hitbox: pygame.Rect = pygame.Rect(self._x + 16, self._y + 16, 96, 96)
 
     def update(self, *args) -> None:
@@ -30,11 +31,11 @@ class Entity:
     def get_image(self) -> pygame.Surface:
         return self._image
 
-    def collide_logic(self, entity: Entity) -> bool:
+    def collide_logic(self, e: Entity) -> bool:
         pass
 
     # SET ENTITY POSITION, AS WELL AS UPDATE HITBOX TO NEW POSITION
-    def set_position(self, velo_change: tuple[float, float]) -> None:
+    def update_position(self, velo_change: tuple[int, int]) -> None:
 
         self._x += velo_change[0]
         self._hitbox.x += velo_change[0]

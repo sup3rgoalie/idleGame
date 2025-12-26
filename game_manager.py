@@ -7,6 +7,7 @@ import entity
 import key_handler
 import player
 import asset_handler
+import world
 import world_manager
 from ui import UI
 
@@ -72,9 +73,7 @@ class Game:
         self.entity_list: list[entity.Entity] = []
         self.ui: UI = UI(self)
 
-        temp_list = self.w_manager.load_world_entities("world_0")
-        for e in temp_list:
-            self.entity_list.append(e)
+        self.current_world: world.World = self.w_manager.get_worlds()["world_0"]
 
 
     # MAIN GAME LOOP FUNCTION
@@ -94,12 +93,13 @@ class Game:
 
             self.key_h.get_key_pressed()
             # DRAW CURRENT WORLD
-            self.w_manager.draw_world("world_0", self.canvas)
-            check_collision(self.user, self.entity_list)
-            for e in self.entity_list:
+            self.w_manager.draw_world(self.current_world.name, self.canvas)
+
+            check_collision(self.user, self.current_world.entities)
+
+            for e in self.current_world.entities:
                 e.update()
                 e.draw(self.canvas)
-                # DEBUG pygame.draw.rect(self.canvas, pygame.Color("white"), e.get_hitbox())
 
             self.user.update(self.dt)
             self.user.draw(self.canvas)

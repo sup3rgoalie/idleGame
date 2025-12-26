@@ -5,4 +5,4 @@ farm 6 3
 farm 7 3
 farm 8 3
 farm 9 3
-shop 8 8
+world 0 4 1 2 world_1

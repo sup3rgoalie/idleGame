@@ -8,7 +8,7 @@ from entity import Entity
 
 class Farmland(entity.Entity):
     def __init__(self, pos_x: int, pos_y: int, images: dict[str, pygame.Surface], game: game_manager.Game) -> None:
-        super().__init__(pos_x, pos_y, images, game)
+        super().__init__(pos_x, pos_y, game, images)
         self.set_hitbox((30, 30), (4, 4))
         self._image: pygame.Surface = self._images["farmland_healthy"]
         self._plant: plant.Plant = plant.Plant("wheat", self.get_position(), self._game)

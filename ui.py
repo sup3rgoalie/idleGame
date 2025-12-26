@@ -14,7 +14,7 @@ class UI:
         self.game: game_manager.Game = game
         self._ui_elements: dict[str, pygame.Surface] = self.game.assets.ui_elements
         self._sprite_counter: int = 0
-        self.ui_font = pygame.font.SysFont("Arial", 24, True)
+        self.ui_font = pygame.font.SysFont("Arial", 24)
         self.outside_items_to_display: list[tuple[pygame.Surface, tuple[int, int]]] = []
 
     def update(self) -> None:
@@ -25,7 +25,7 @@ class UI:
             self.game.canvas.blit(self._ui_elements["item_bar"], (20, 20))
             icon_x, text_x = 36, 58
             icon_y, text_y = 36, 32
-            x_offset_per_item: int = 90
+            x_offset_per_item: int = 70
             for crop_type in self.game.user.inventory:
                 if self.game.user.inventory[crop_type] > 9999:
                     adjusted_count_str: str = f"{round(self.game.user.inventory[crop_type] / 1000)}K"
