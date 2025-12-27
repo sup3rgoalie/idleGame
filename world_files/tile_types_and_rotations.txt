@@ -1,0 +1,6 @@
+gg grass_whole 0
+go grass_outer_corner 4
+gi grass_inside_corner 4
+g1 grass_one_side 4
+g2 grass_two_side 2
+g3 grass_three_side 4

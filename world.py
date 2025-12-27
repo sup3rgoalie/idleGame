@@ -59,7 +59,7 @@ def _read_config_file(file_path: str, game: game_manager.Game) -> list[entity.En
 # CREATES A SURFACE WITH WORLDS TILES
 def _create_world_surface(layout: list[list[str]], background: list[list[str]], game: game_manager.Game) -> pygame.Surface:
     world_surface: pygame.Surface = pygame.Surface((game.SCREEN_WIDTH, game.SCREEN_HEIGHT))
-
+    tile_config: dict[str, tuple[str, int]] = game.w_manager.get_tile_config()
     for y, row in enumerate(background):
         for x, tile in enumerate(row):
             screen_x = game.TILE_SIZE * x
@@ -71,67 +71,27 @@ def _create_world_surface(layout: list[list[str]], background: list[list[str]], 
             if tile == "w":
                 world_surface.blit(game.assets.tile_images["water_background"],(screen_x, screen_y))
 
+
     for y, row in enumerate(layout):
         for x, tile in enumerate(row):
             screen_x = game.TILE_SIZE * x
             screen_y = game.TILE_SIZE * y
-            if tile == "ggg":
-                world_surface.blit(game.assets.tile_images["grass_whole"],(screen_x, screen_y))
+            if tile != "000":
+                for key in tile_config:
+                    if tile.find(key) != -1:
+                        image_name, rotation = tile_config[key]
+                        tile_image = game.assets.tile_images[image_name]
+                        if rotation == 4:
+                            rotation_angle: float = 90 * (int(tile[2]) - 1)
+                            if rotation_angle > 0:
+                                tile_image = pygame.transform.rotate(tile_image, rotation_angle)
+                        elif rotation == 2:
+                            rotation_angle: float = 180 * (int(tile[2]) - 1)
+                            if rotation_angle > 0:
+                                tile_image = pygame.transform.rotate(tile_image, rotation_angle)
+                        world_surface.blit(tile_image, (screen_x, screen_y))
+                        break
 
-            elif tile == "gi1":
-                world_surface.blit(game.assets.tile_images["grass_inside_corner"],(screen_x, screen_y))
-            elif tile == "gi2":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_inside_corner"], 90)
-                world_surface.blit(rotated_tile_image,(screen_x, screen_y))
-            elif tile == "gi3":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_inside_corner"], 180)
-                world_surface.blit(rotated_tile_image, (screen_x, screen_y))
-            elif tile == "gi4":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_inside_corner"], 270)
-                world_surface.blit(rotated_tile_image, (screen_x, screen_y))
-
-
-            elif tile == "go1":
-                world_surface.blit(game.assets.tile_images["grass_outer_corner"],(screen_x, screen_y))
-            elif tile == "go2":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_outer_corner"], 90)
-                world_surface.blit(rotated_tile_image,(screen_x, screen_y))
-            elif tile == "go3":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_outer_corner"], 180)
-                world_surface.blit(rotated_tile_image, (screen_x, screen_y))
-            elif tile == "go4":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_outer_corner"], 270)
-                world_surface.blit(rotated_tile_image, (screen_x, screen_y))
-
-            elif tile == "g11":
-                world_surface.blit(game.assets.tile_images["grass_one_side"],(screen_x, screen_y))
-            elif tile == "g12":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_one_side"], 90)
-                world_surface.blit(rotated_tile_image,(screen_x, screen_y))
-            elif tile == "g13":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_one_side"], 180)
-                world_surface.blit(rotated_tile_image, (screen_x, screen_y))
-            elif tile == "g14":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_one_side"], 270)
-                world_surface.blit(rotated_tile_image, (screen_x, screen_y))
-
-            elif tile == "g2v":
-                world_surface.blit(game.assets.tile_images["grass_two_side"],(screen_x, screen_y))
-            elif tile == "g2h":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_two_side"], 90)
-                world_surface.blit(rotated_tile_image,(screen_x, screen_y))
-
-            elif tile == "g31":
-                world_surface.blit(game.assets.tile_images["grass_three_side"],(screen_x, screen_y))
-            elif tile == "g32":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_three_side"], 90)
-                world_surface.blit(rotated_tile_image,(screen_x, screen_y))
-            elif tile == "g33":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_three_side"], 180)
-                world_surface.blit(rotated_tile_image, (screen_x, screen_y))
-            elif tile == "g34":
-                rotated_tile_image = pygame.transform.rotate(game.assets.tile_images["grass_three_side"], 270)
-                world_surface.blit(rotated_tile_image, (screen_x, screen_y))
     world_surface.convert_alpha()
     return world_surface
 

@@ -15,18 +15,38 @@ def _load_worlds(world_files_path: str, game: game_manager.Game) -> dict[str, wo
     worlds: dict[str, world.World] = {}
 
     for world_file in world_paths:
-        temp_world: world.World = world.World(world_file, f"{world_files_path}/{world_file}", game)
-        worlds[temp_world.name] = temp_world
+        if world_file.find("txt") == -1:
+            temp_world: world.World = world.World(world_file, f"{world_files_path}/{world_file}", game)
+            worlds[temp_world.name] = temp_world
     return worlds
 
+def _load_tile_config(file_path: str) -> dict[str, tuple[str, int]]:
+    tile_config: dict[str, tuple[str, int]] = {}
+    with (open(file_path, "r") as file):
+        file_lines: list[str] = file.readlines()
+        for line in file_lines:
+            line.strip()
+            print(line)
+            line_elements:list[str] = line.split(" ")
+            print(line_elements)
+            if len(line_elements) == 3:
+                tile_config[line_elements[0]] = (line_elements[1], int(line_elements[2]))
+    print(tile_config)
+    return tile_config
 
 class WorldManager:
-    def __init__(self, world_files_path: str, game: game_manager.Game) -> None:
+    def __init__(self, game: game_manager.Game) -> None:
         self._game: game_manager.Game = game
-        self._worlds: dict[str, world.World] = _load_worlds(world_files_path, game)
+        self._tile_config: dict[str, tuple[str, int]] = {}
+        self._worlds: dict[str, world.World] = {}
         self.current_world: world.World = None
         self.current_entity_list: list[entity.Entity] = []
-        self.change_world("world_0")
+
+    def load_tile_config(self):
+        self._tile_config = _load_tile_config("world_files/tile_types_and_rotations.txt")
+
+    def load_worlds(self, world_files_path: str):
+        self._worlds = _load_worlds(world_files_path, self._game)
 
 
     # GET A COPY OF THE WORLDS ENTITIES
@@ -51,6 +71,9 @@ class WorldManager:
 
     def get_worlds(self) -> dict[str, world.World]:
         return self._worlds
+
+    def get_tile_config(self) -> dict[str, tuple[str, int]]:
+        return self._tile_config
 
 
 # UNIT TEST

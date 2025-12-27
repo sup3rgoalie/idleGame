@@ -47,6 +47,9 @@ class Game:
         pygame.init()
         self.SCREEN_WIDTH: Final[int] = 1024
         self.SCREEN_HEIGHT: Final[int] = 768
+        self.TILE_SIZE: Final[int] = 64
+        self.BLACK: Final[tuple] = (0, 0, 0)
+        self.running: bool = True
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.display.set_caption("Farm Wars")
         self.canvas = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
@@ -54,15 +57,16 @@ class Game:
         self.assets = asset_handler.AssetHandler()
         self.assets.load_images()
 
+        self.w_manager = world_manager.WorldManager(self)
+        self.w_manager.load_tile_config()
+        self.w_manager.load_worlds("world_files")
+        self.w_manager.change_world("world_0")
+
         # INIT VARIABLES
         self.clock = pygame.time.Clock()
-        self.TILE_SIZE: Final[int] = 64
-        self.running: bool = True
-        self.BLACK: Final[tuple] = (0, 0, 0)
         self.text_font = pygame.font.SysFont("Arial", 48, True)
 
         self.user: player.Player = player.Player(10, 10, self.assets.player_images, 300, self)
-        self.w_manager = world_manager.WorldManager("world_files", self)
         self.key_h: key_handler.KeyHandler = key_handler.KeyHandler(self)
         self.last_time: float = time.time()
         self.current_time: float = 0.0
