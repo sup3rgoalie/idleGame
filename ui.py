@@ -2,6 +2,8 @@ import pygame
 
 import farmland
 import game_manager
+import item
+
 
 # RENDER TEXT TO THE GAME SCREEN
 def render_text(text: str, color: tuple, pos: tuple[int, int], font: pygame.Font, screen: pygame.Surface) -> None:
@@ -17,6 +19,7 @@ class UI:
         self.ui_font = pygame.font.SysFont("Arial", 24)
         self.outside_items_to_display: list[tuple[pygame.Surface, tuple[int, int]]] = []
         self._click_cooldown_counter: int = 0
+        self._selected_item: item.Item = None
 
 
     def update(self) -> None:
@@ -55,25 +58,30 @@ class UI:
                 item_x, item_y = 130, 112
                 image_size = 96
                 item_offset_x, item_offset_y = 144, 144
-                inventory_button_list: list[pygame.Rect] = []
+                inventory_button_dict: dict[int, pygame.Rect] = {}
 
-                for i, item in enumerate(self.game.user.item_inventory):
+                for i, user_item in enumerate(self.game.user.item_inventory):
                     temp_rect = pygame.Rect(item_x, item_y, image_size, image_size)
-                    inventory_button_list.append(temp_rect)
+                    inventory_button_dict[i] = temp_rect
                     if temp_rect.collidepoint(mouse_pos):
                         pygame.draw.rect(canvas, pygame.Color("black"), temp_rect)
+                        if self.game.left_click and self._click_cooldown_counter > 10:
+                            self._selected_item = user_item
                     else:
                         pygame.draw.rect(canvas, pygame.Color("white"), temp_rect)
-                    #canvas.blit(item.get_images()["inventory_icon"], (item_x, item_y))
+                    canvas.blit(user_item.get_images()["inventory_icon"], (item_x, item_y))
                     item_x += item_offset_x
                     if (i + 1) % 4 == 0:
                         item_x = 130
                         item_y += item_offset_y
                 test = pygame.mouse.get_just_pressed()
-
+                if self._selected_item is not None:
+                    canvas.blit(self._selected_item.get_images()["inventory_icon"], (760, 112))
                 if self.game.left_click and self._click_cooldown_counter > 10:
                     print(f'Clicked: {mouse_pos}')
                     self._click_cooldown_counter = 0
+            else:
+                self._selected_item = None
 
 
         self.outside_items_to_display.clear()

@@ -19,7 +19,11 @@ class Player(entity.Entity):
         self.seed_inventory: dict[str, int] = {"wheat_seed": 0, "carrot_seed": 0, "corn_seed": 0, "tomato_seed": 0}
 
         for i in range(self.inventory_size):
-            temp_item_att:dict[str, str] = {"type": "sword", "description": "test item"}
+            temp_item_att: dict[str, str] = {}
+            if i % 2 == 0:
+                temp_item_att:dict[str, str] = {"type": "sword", "description": "test item sword"}
+            else:
+                temp_item_att:dict[str, str] = {"type": "bow", "description": "test item bow"}
             temp_item_images: dict[str, pygame.Surface] = {"inventory_icon": self._game.assets.tile_images["grass_whole"]}
             temp_item = item.Item(temp_item_att, temp_item_images)
             self.item_inventory.append(temp_item)
