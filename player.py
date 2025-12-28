@@ -11,7 +11,7 @@ class Player(entity.Entity):
         self._image = self._images["player"]
         self._can_move = True
         self.interacting = False
-        self.inventory: dict[str, int] = {"wheat": 10000, "carrot": 1000, "corn": 1000, "tomato": 1000}
+        self.crop_inventory: dict[str, int] = {"wheat": 10000, "carrot": 1000, "corn": 1000, "tomato": 1000}
 
     # UPDATE PLAYER
     def update(self, dt: float) -> None:

@@ -30,7 +30,7 @@ class Farmland(entity.Entity):
             e.interacting = True
             if self._plant is not None:
                 if self._plant.can_be_harvested and self._game.key_h.enter_pressed:
-                    e.inventory[self._plant.get_plant_type()] += 1
+                    e.crop_inventory[self._plant.get_plant_type()] += 1
                     self._plant = None
             elif self._game.key_h.space_pressed:
                 self._plant = plant.Plant("wheat", self.get_position(), self._game)

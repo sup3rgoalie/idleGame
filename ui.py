@@ -26,13 +26,13 @@ class UI:
             icon_x, text_x = 36, 58
             icon_y, text_y = 36, 32
             x_offset_per_item: int = 70
-            for crop_type in self.game.user.inventory:
-                if self.game.user.inventory[crop_type] > 9999:
-                    adjusted_count_str: str = f"{round(self.game.user.inventory[crop_type] / 1000)}K"
+            for crop_type in self.game.user.crop_inventory:
+                if self.game.user.crop_inventory[crop_type] > 9999:
+                    adjusted_count_str: str = f"{round(self.game.user.crop_inventory[crop_type] / 1000)}K"
                     render_text(adjusted_count_str, pygame.Color("white"), (text_x, text_y), self.ui_font,
                                 self.game.canvas)
                 else:
-                    render_text(f"{self.game.user.inventory[crop_type]}", pygame.Color("white"), (text_x, text_y), self.ui_font,
+                    render_text(f"{self.game.user.crop_inventory[crop_type]}", pygame.Color("white"), (text_x, text_y), self.ui_font,
                                 self.game.canvas)
                 if crop_type == "wheat":
                     icon_y -= 2
