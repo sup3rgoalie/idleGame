@@ -77,6 +77,7 @@ class UI:
                 test = pygame.mouse.get_just_pressed()
                 if self._selected_item is not None:
                     canvas.blit(self._selected_item.get_images()["inventory_icon"], (760, 112))
+                    render_text(self._selected_item.get_description(), pygame.Color("white"), (740, 300), self.ui_font, canvas)
                 if self.game.left_click and self._click_cooldown_counter > 10:
                     print(f'Clicked: {mouse_pos}')
                     self._click_cooldown_counter = 0

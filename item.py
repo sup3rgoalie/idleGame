@@ -9,3 +9,7 @@ class Item:
 
     def get_images(self) -> dict[str, pygame.Surface]:
         return self._item_images
+    def get_type(self) -> str:
+        return self._item_type
+    def get_description(self) -> str:
+        return self._item_description
