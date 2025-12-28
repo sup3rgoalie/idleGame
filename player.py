@@ -1,6 +1,8 @@
 import pygame
 import entity
 import game_manager
+import item
+
 
 # CLASS FOR PLAYER
 class Player(entity.Entity):
@@ -12,6 +14,15 @@ class Player(entity.Entity):
         self._can_move = True
         self.interacting = False
         self.crop_inventory: dict[str, int] = {"wheat": 10000, "carrot": 1000, "corn": 1000, "tomato": 1000}
+        self.inventory_size: int = 16
+        self.item_inventory: list[item.Item] = []
+        self.seed_inventory: dict[str, int] = {"wheat_seed": 0, "carrot_seed": 0, "corn_seed": 0, "tomato_seed": 0}
+
+        for i in range(self.inventory_size):
+            temp_item_att:dict[str, str] = {"type": "sword", "description": "test item"}
+            temp_item_images: dict[str, pygame.Surface] = {"inventory_icon": self._game.assets.tile_images["grass_whole"]}
+            temp_item = item.Item(temp_item_att, temp_item_images)
+            self.item_inventory.append(temp_item)
 
     # UPDATE PLAYER
     def update(self, dt: float) -> None:

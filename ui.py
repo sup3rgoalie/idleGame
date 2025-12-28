@@ -18,11 +18,13 @@ class UI:
         self.outside_items_to_display: list[tuple[pygame.Surface, tuple[int, int]]] = []
         self._click_cooldown_counter: int = 0
 
+
     def update(self) -> None:
+        canvas = self.game.canvas
         self._click_cooldown_counter += 1
         if self.game.game_state == "PLAY":
             # DRAW ITEM BAR
-            self.game.canvas.blit(self._ui_elements["item_bar"], (20, 20))
+            canvas.blit(self._ui_elements["item_bar"], (20, 20))
             icon_x, text_x = 36, 58
             icon_y, text_y = 36, 32
             x_offset_per_item: int = 70
@@ -30,30 +32,49 @@ class UI:
                 if self.game.user.crop_inventory[crop_type] > 9999:
                     adjusted_count_str: str = f"{round(self.game.user.crop_inventory[crop_type] / 1000)}K"
                     render_text(adjusted_count_str, pygame.Color("white"), (text_x, text_y), self.ui_font,
-                                self.game.canvas)
+                                canvas)
                 else:
                     render_text(f"{self.game.user.crop_inventory[crop_type]}", pygame.Color("white"), (text_x, text_y), self.ui_font,
-                                self.game.canvas)
+                                canvas)
                 if crop_type == "wheat":
                     icon_y -= 2
-                    self.game.canvas.blit(self._ui_elements[f"{crop_type}_icon"], (icon_x, icon_y))
+                    canvas.blit(self._ui_elements[f"{crop_type}_icon"], (icon_x, icon_y))
                     icon_y += 2
                 else:
-                    self.game.canvas.blit(self._ui_elements[f"{crop_type}_icon"], (icon_x, icon_y))
+                    canvas.blit(self._ui_elements[f"{crop_type}_icon"], (icon_x, icon_y))
                 text_x += x_offset_per_item
                 icon_x += x_offset_per_item
 
             if len(self.outside_items_to_display) > 0:
                 for item in self.outside_items_to_display:
-                    self.game.canvas.blit(item[0], item[1])
+                    canvas.blit(item[0], item[1])
 
             if self.game.key_h.tab_pressed:
-                self.game.canvas.blit(self._ui_elements["inventory_image"], (64,48))
+                canvas.blit(self._ui_elements["inventory_image"], (64,48))
                 mouse_pos: tuple[int, int] = pygame.mouse.get_pos()
+                item_x, item_y = 130, 112
+                image_size = 96
+                item_offset_x, item_offset_y = 144, 144
+                inventory_button_list: list[pygame.Rect] = []
+
+                for i, item in enumerate(self.game.user.item_inventory):
+                    temp_rect = pygame.Rect(item_x, item_y, image_size, image_size)
+                    inventory_button_list.append(temp_rect)
+                    if temp_rect.collidepoint(mouse_pos):
+                        pygame.draw.rect(canvas, pygame.Color("black"), temp_rect)
+                    else:
+                        pygame.draw.rect(canvas, pygame.Color("white"), temp_rect)
+                    #canvas.blit(item.get_images()["inventory_icon"], (item_x, item_y))
+                    item_x += item_offset_x
+                    if (i + 1) % 4 == 0:
+                        item_x = 130
+                        item_y += item_offset_y
                 test = pygame.mouse.get_just_pressed()
+
                 if self.game.left_click and self._click_cooldown_counter > 10:
                     print(f'Clicked: {mouse_pos}')
                     self._click_cooldown_counter = 0
+
 
         self.outside_items_to_display.clear()
 
