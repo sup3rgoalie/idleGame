@@ -76,6 +76,9 @@ class Game:
         self.game_state: str = self.game_states[0]
         self.entity_list: list[entity.Entity] = []
         self.ui: UI = UI(self)
+        self.left_click: bool = False
+        self.right_click: bool = False
+        self.middle_click: bool = False
 
 
 
@@ -94,6 +97,27 @@ class Game:
             self.screen.fill(self.BLACK)
             self.canvas.fill(self.BLACK)
 
+            # CHECK GAME EVENTS
+            for event in pygame.event.get():
+                # STOP GAME LOOP IF WINDOW IS CLOSED/ GAME IS QUIT
+                if event.type == pygame.QUIT or self.key_h.exit_pressed:
+                    self.running = False
+                    break
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.left_click = True
+                    if event.button == 2:
+                        self.middle_click = True
+                    if event.button == 3:
+                        self.right_click = True
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        self.left_click = False
+                    if event.button == 2:
+                        self.middle_click = False
+                    if event.button == 3:
+                        self.right_click = False
+
             self.key_h.get_key_pressed()
             # DRAW CURRENT WORLD
             self.w_manager.draw_world(self.w_manager.current_world.name, self.canvas)
@@ -107,13 +131,6 @@ class Game:
 
             self.user.update(self.dt)
             self.user.draw(self.canvas)
-
-            # CHECK GAME EVENTS
-            for event in pygame.event.get():
-                # STOP GAME LOOP IF WINDOW IS CLOSED/ GAME IS QUIT
-                if event.type == pygame.QUIT or self.key_h.exit_pressed:
-                    self.running = False
-                    break
 
             self.ui.update()
 

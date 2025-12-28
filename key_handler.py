@@ -13,10 +13,14 @@ class KeyHandler:
         self.enter_pressed: bool = False
         self.space_pressed: bool = False
         self.exit_pressed: bool = False
+        self.tab_pressed: bool = False
+        self.space_pressed: bool = False
+        self.exit_pressed: bool = False
 
     def get_key_pressed(self) -> None:
 
         key = pygame.key.get_pressed()
+        tapped_key = pygame.key.get_just_pressed()
 
         if key[pygame.K_a]:
             self.a_pressed = True
@@ -52,3 +56,9 @@ class KeyHandler:
             self.exit_pressed = True
         else:
             self.exit_pressed = False
+
+        if tapped_key[pygame.K_TAB]:
+            if self.tab_pressed:
+                self.tab_pressed = False
+            else:
+                self.tab_pressed = True

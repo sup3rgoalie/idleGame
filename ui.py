@@ -16,11 +16,11 @@ class UI:
         self._sprite_counter: int = 0
         self.ui_font = pygame.font.SysFont("Arial", 24)
         self.outside_items_to_display: list[tuple[pygame.Surface, tuple[int, int]]] = []
+        self._click_cooldown_counter: int = 0
 
     def update(self) -> None:
-
+        self._click_cooldown_counter += 1
         if self.game.game_state == "PLAY":
-
             # DRAW ITEM BAR
             self.game.canvas.blit(self._ui_elements["item_bar"], (20, 20))
             icon_x, text_x = 36, 58
@@ -43,10 +43,18 @@ class UI:
                 text_x += x_offset_per_item
                 icon_x += x_offset_per_item
 
-
             if len(self.outside_items_to_display) > 0:
                 for item in self.outside_items_to_display:
                     self.game.canvas.blit(item[0], item[1])
+
+            if self.game.key_h.tab_pressed:
+                self.game.canvas.blit(self._ui_elements["inventory_image"], (64,48))
+                mouse_pos: tuple[int, int] = pygame.mouse.get_pos()
+                test = pygame.mouse.get_just_pressed()
+                if self.game.left_click and self._click_cooldown_counter > 10:
+                    print(f'Clicked: {mouse_pos}')
+                    self._click_cooldown_counter = 0
+
         self.outside_items_to_display.clear()
 
     def add_farm_popup_to_ui(self, position: tuple[int, int], calling_farmland: farmland.Farmland) -> None:
