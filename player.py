@@ -17,6 +17,7 @@ class Player(entity.Entity):
         self.inventory_size: int = 16
         self.item_inventory: list[item.Item] = []
         self.seed_inventory: dict[str, int] = {"wheat_seed": 0, "carrot_seed": 0, "corn_seed": 0, "tomato_seed": 0}
+        self._player_item: item.Item = None
 
 
         rarity_temp = "common"
@@ -40,6 +41,7 @@ class Player(entity.Entity):
             temp_item_images: dict[str, pygame.Surface] = {"inventory_icon": self._game.assets.ui_elements["basic_sword_icon"]}
             temp_item = item.Item(temp_item_att, temp_item_images)
             self.item_inventory.append(temp_item)
+        self._player_item = self.item_inventory[0]
 
     # UPDATE PLAYER
     def update(self, dt: float) -> None:
@@ -55,6 +57,13 @@ class Player(entity.Entity):
         screen.blit(self._image, (self._x, self._y))
         # DEBUG pygame.draw.rect(screen, pygame.Color("black"), self._hitbox)
 
+    def change_equipt_item(self, new_item: item.Item) -> None:
+        if isinstance(new_item, item.Item):
+            self._player_item = new_item
+        else:
+            print("TRIED TO EQUIPT NON ITEM OBJECT")
+    def get_equipt_item(self) -> item.Item:
+        return self._player_item
 
     def update_position(self, velo_change: tuple[float, float]) -> None:
         new_x: float = self._x + velo_change[0]

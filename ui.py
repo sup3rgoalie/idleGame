@@ -6,8 +6,8 @@ import item
 
 
 # RENDER TEXT TO THE GAME SCREEN
-def render_text(text: str, color: tuple, pos: tuple[int, int], font: pygame.Font, screen: pygame.Surface) -> None:
-    text_to_draw: pygame.Surface = font.render(text, True, pygame.Color(color))
+def render_text(text: str, color: pygame.Color, pos: tuple[int, int], font: pygame.Font, screen: pygame.Surface) -> None:
+    text_to_draw: pygame.Surface = font.render(text, True, color)
     screen.blit(text_to_draw, (pos[0], pos[1]))
 
 
@@ -74,27 +74,65 @@ class UI:
                         item_rarity_border = pygame.transform.scale(item_rarity_border, selected_image_size)
                         selected_item_x: int = item_x - 16
                         selected_item_y: int = item_y - 16
+                        if user_item == self.game.user.get_equipt_item():
+                            border_size = selected_image_size[0] + 4
+                            border_rect: pygame.Rect = pygame.Rect(selected_item_x - 2, selected_item_y - 2, border_size, border_size)
+                            pygame.draw.rect(canvas, pygame.Color("green"), border_rect)
                         canvas.blit(item_rarity_border, (selected_item_x, selected_item_y))
                         canvas.blit(item_icon_image, (selected_item_x, selected_item_y))
                         if self.game.left_click and self._click_cooldown_counter > 10:
                             self._selected_item = user_item
                             self._selected_item_icon = pygame.transform.scale(item_icon_image, (160, 160))
                             self._selected_item_rarity_border = pygame.transform.scale(item_rarity_border, (160, 160))
+                            self._click_cooldown_counter = 0
                     else:
+                        if user_item == self.game.user.get_equipt_item():
+                            border_rect: pygame.Rect = pygame.Rect(item_x - 2, item_y - 2, image_size + 4, image_size + 4)
+                            pygame.draw.rect(canvas, pygame.Color("green"), border_rect)
                         canvas.blit(item_rarity_border, (item_x, item_y))
                         canvas.blit(item_icon_image, (item_x, item_y))
                     item_x += item_offset_x
                     if (i + 1) % 4 == 0:
                         item_x = 130
                         item_y += item_offset_y
-                test = pygame.mouse.get_just_pressed()
+
                 if self._selected_item is not None:
+                    bottom_button_x, top_button_x = 760, 760
+                    top_button_y, bottom_button_y, button_width, button_height = 560, 620, 128, 48
                     canvas.blit(self._selected_item_rarity_border, (740, 96))
                     canvas.blit(self._selected_item_icon, (740, 96))
                     render_text(self._selected_item.get_description(), pygame.Color("white"), (740, 300), self.ui_font, canvas)
-                if self.game.left_click and self._click_cooldown_counter > 10:
-                    print(f'Clicked: {mouse_pos}')
-                    self._click_cooldown_counter = 0
+                    top_button: pygame.Rect = pygame.Rect(top_button_x, top_button_y, button_width, button_height)
+                    bottom_button: pygame.Rect = pygame.Rect(bottom_button_x, bottom_button_y, button_width, button_height)
+                    selected_item_is_equipt = self.game.user._player_item is not None and self.game.user._player_item == self._selected_item
+
+                    if top_button.collidepoint(mouse_pos):
+                        top_button_x -= 16
+                        top_button_y -= 6
+                        if selected_item_is_equipt:
+                            button_image = pygame.transform.scale(self._ui_elements["yellow_button"],
+                                                                  (button_width + 32, button_height + 12))
+                        else:
+                            button_image = pygame.transform.scale(self._ui_elements["green_button"], (button_width + 32, button_height + 12))
+                        if self.game.left_click and self._click_cooldown_counter > 10:
+                            self._click_cooldown_counter = 0
+                            self.game.user.change_equipt_item(self._selected_item)
+                    else:
+                        if selected_item_is_equipt:
+                            button_image = self._ui_elements["yellow_button"]
+                        else:
+                            button_image = self._ui_elements["green_button"]
+                    canvas.blit(button_image, (top_button_x, top_button_y))
+
+
+                    if bottom_button.collidepoint(mouse_pos):
+                        bottom_button_x -= 16
+                        bottom_button_y -= 6
+                        button_image = pygame.transform.scale(self._ui_elements["red_button"], (button_width + 32, button_height + 12))
+                        canvas.blit(button_image, (bottom_button_x, bottom_button_y))
+                    else:
+                        canvas.blit(self._ui_elements["red_button"], (bottom_button_x, bottom_button_y))
+
             else:
                 self._selected_item = None
                 self._selected_item_icon = None

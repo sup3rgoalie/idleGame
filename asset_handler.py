@@ -95,6 +95,15 @@ class AssetHandler:
                 item_icon_image.convert_alpha()
                 self.ui_elements[name] = item_icon_image
 
+            button_icons_path = "assets/ui_elements/buttons"
+            button_icon_images = os.listdir(button_icons_path)
+            for button_file_name in button_icon_images:
+                name = button_file_name.split(".")[0]
+                button_image = pygame.image.load(os.path.join(button_icons_path, button_file_name))
+                button_image = pygame.transform.scale(button_image, (128, 48))
+                button_image.convert_alpha()
+                self.ui_elements[name] = button_image
+
         except FileNotFoundError:
             print("FILE NOT FOUND, FATAL ERROR")
             exit()
