@@ -86,6 +86,15 @@ class AssetHandler:
                 tile_image.convert_alpha()
                 self.tile_images[name] = tile_image
 
+            item_icons_path = "assets/ui_elements/item_icons"
+            item_icon_images = os.listdir(item_icons_path)
+            for item_icon_file_name in item_icon_images:
+                name = item_icon_file_name.split(".")[0]
+                item_icon_image = pygame.image.load(os.path.join(item_icons_path, item_icon_file_name))
+                item_icon_image = pygame.transform.scale(item_icon_image, (96, 96))
+                item_icon_image.convert_alpha()
+                self.ui_elements[name] = item_icon_image
+
         except FileNotFoundError:
             print("FILE NOT FOUND, FATAL ERROR")
             exit()

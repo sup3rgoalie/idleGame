@@ -20,6 +20,8 @@ class UI:
         self.outside_items_to_display: list[tuple[pygame.Surface, tuple[int, int]]] = []
         self._click_cooldown_counter: int = 0
         self._selected_item: item.Item = None
+        self._selected_item_rarity_border: pygame.Surface = None
+        self._selected_item_icon: pygame.Surface = None
 
 
     def update(self) -> None:
@@ -57,32 +59,46 @@ class UI:
                 mouse_pos: tuple[int, int] = pygame.mouse.get_pos()
                 item_x, item_y = 130, 112
                 image_size = 96
+                selected_image_size: tuple[int, int] = (128, 128)
                 item_offset_x, item_offset_y = 144, 144
                 inventory_button_dict: dict[int, pygame.Rect] = {}
 
                 for i, user_item in enumerate(self.game.user.item_inventory):
-                    temp_rect = pygame.Rect(item_x, item_y, image_size, image_size)
+                    temp_rect: pygame.Rect = pygame.Rect(item_x, item_y, image_size, image_size)
                     inventory_button_dict[i] = temp_rect
+
+                    item_icon_image: pygame.Surface = user_item.get_images()["inventory_icon"]
+                    item_rarity_border: pygame.Surface = self._ui_elements[f"{user_item.get_rarity()}_border"]
                     if temp_rect.collidepoint(mouse_pos):
-                        pygame.draw.rect(canvas, pygame.Color("black"), temp_rect)
+                        item_icon_image = pygame.transform.scale(item_icon_image, selected_image_size)
+                        item_rarity_border = pygame.transform.scale(item_rarity_border, selected_image_size)
+                        selected_item_x: int = item_x - 16
+                        selected_item_y: int = item_y - 16
+                        canvas.blit(item_rarity_border, (selected_item_x, selected_item_y))
+                        canvas.blit(item_icon_image, (selected_item_x, selected_item_y))
                         if self.game.left_click and self._click_cooldown_counter > 10:
                             self._selected_item = user_item
+                            self._selected_item_icon = pygame.transform.scale(item_icon_image, (160, 160))
+                            self._selected_item_rarity_border = pygame.transform.scale(item_rarity_border, (160, 160))
                     else:
-                        pygame.draw.rect(canvas, pygame.Color("white"), temp_rect)
-                    canvas.blit(user_item.get_images()["inventory_icon"], (item_x, item_y))
+                        canvas.blit(item_rarity_border, (item_x, item_y))
+                        canvas.blit(item_icon_image, (item_x, item_y))
                     item_x += item_offset_x
                     if (i + 1) % 4 == 0:
                         item_x = 130
                         item_y += item_offset_y
                 test = pygame.mouse.get_just_pressed()
                 if self._selected_item is not None:
-                    canvas.blit(self._selected_item.get_images()["inventory_icon"], (760, 112))
+                    canvas.blit(self._selected_item_rarity_border, (740, 96))
+                    canvas.blit(self._selected_item_icon, (740, 96))
                     render_text(self._selected_item.get_description(), pygame.Color("white"), (740, 300), self.ui_font, canvas)
                 if self.game.left_click and self._click_cooldown_counter > 10:
                     print(f'Clicked: {mouse_pos}')
                     self._click_cooldown_counter = 0
             else:
                 self._selected_item = None
+                self._selected_item_icon = None
+                self._selected_item_rarity_border = None
 
 
         self.outside_items_to_display.clear()

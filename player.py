@@ -18,13 +18,26 @@ class Player(entity.Entity):
         self.item_inventory: list[item.Item] = []
         self.seed_inventory: dict[str, int] = {"wheat_seed": 0, "carrot_seed": 0, "corn_seed": 0, "tomato_seed": 0}
 
+
+        rarity_temp = "common"
         for i in range(self.inventory_size):
             temp_item_att: dict[str, str] = {}
             if i % 2 == 0:
                 temp_item_att:dict[str, str] = {"type": "sword", "description": "test item sword"}
             else:
                 temp_item_att:dict[str, str] = {"type": "bow", "description": "test item bow"}
-            temp_item_images: dict[str, pygame.Surface] = {"inventory_icon": self._game.assets.tile_images["grass_whole"]}
+            if rarity_temp == "common":
+                rarity_temp = "uncommon"
+            elif rarity_temp == "uncommon":
+                rarity_temp = "rare"
+            elif rarity_temp == "rare":
+                rarity_temp = "epic"
+            elif rarity_temp == "epic":
+                rarity_temp = "legendary"
+            elif rarity_temp == "legendary":
+                rarity_temp = "common"
+            temp_item_att["rarity"] = rarity_temp
+            temp_item_images: dict[str, pygame.Surface] = {"inventory_icon": self._game.assets.ui_elements["basic_sword_icon"]}
             temp_item = item.Item(temp_item_att, temp_item_images)
             self.item_inventory.append(temp_item)
 
