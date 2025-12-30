@@ -22,7 +22,7 @@ class UI:
         self._selected_item: item.Item = None
         self._selected_item_rarity_border: pygame.Surface = None
         self._selected_item_icon: pygame.Surface = None
-
+        self._delete_pressed: bool = False
 
     def update(self) -> None:
         canvas = self.game.canvas
@@ -58,7 +58,7 @@ class UI:
             if len(self.outside_items_to_display) > 0:
                 for item in self.outside_items_to_display:
                     canvas.blit(item[0], item[1])
-
+        elif self.game.game_state == "INVENTORY":
             # DRAW THE INVENTORY IF TAB HAS BEEN PRESSED
             if self.game.key_h.tab_pressed:
                 canvas.blit(self._ui_elements["inventory_image"], (64,48))
@@ -113,7 +113,7 @@ class UI:
                     button_font: pygame.Font = pygame.Font("fonts/game_font.ttf", 19)
                     button_font_selected: pygame.Font = pygame.Font("fonts/game_font.ttf", 24)
                     current_button_font: pygame.Font = button_font
-                    button_text: str = "Null"
+                    button_text_top: str = "Null"
                     canvas.blit(self._selected_item_rarity_border, (740, 96))
                     canvas.blit(self._selected_item_icon, (740, 96))
                     render_text(self._selected_item.get_description(), pygame.Color("white"), (740, 300), self.ui_font, canvas)
@@ -127,29 +127,48 @@ class UI:
                         top_text_x -= 16
                         top_text_y -= 2
                         current_button_font = button_font_selected
-                        if selected_item_is_equipt:
+                        button_image = pygame.transform.scale(self._ui_elements["green_button"],
+                                                              (button_width + 32, button_height + 12))
+                        if self._delete_pressed:
+                            top_text_x +=6
+                            button_text = "CONFIRM"
+                        elif selected_item_is_equipt:
                             button_image = pygame.transform.scale(self._ui_elements["yellow_button"],
                                                                   (button_width + 32, button_height + 12))
                             button_text = "EQUIPPED"
                         else:
                             top_text_x += 26
-                            button_image = pygame.transform.scale(self._ui_elements["green_button"], (button_width + 32, button_height + 12))
                             button_text = "EQUIP"
+
                         if self.game.left_click and self._click_cooldown_counter > 10:
+                            if not self._delete_pressed:
+                                self.game.user.change_equipt_item(self._selected_item)
+                            else:
+                                if self._selected_item == self.game.user.get_equipt_item():
+                                    self.game.user.change_equipt_item(None)
+                                self.game.user.item_inventory.remove(self._selected_item)
+                                self._selected_item = None
+                                self._delete_pressed = False
                             self._click_cooldown_counter = 0
-                            self.game.user.change_equipt_item(self._selected_item)
                     else:
-                        if selected_item_is_equipt:
+                        button_image = self._ui_elements["green_button"]
+                        if self._delete_pressed:
+                            top_text_x += 6
+                            button_text = "CONFIRM"
+                        elif selected_item_is_equipt:
                             button_image = self._ui_elements["yellow_button"]
                             button_text = "EQUIPPED"
                         else:
                             top_text_x += 22
-                            button_image = self._ui_elements["green_button"]
                             button_text = "EQUIP"
                     canvas.blit(button_image, (top_button_x, top_button_y))
                     render_text(button_text, pygame.Color("white"), (top_text_x, top_text_y), current_button_font, canvas)
 
-                    button_text = "DELETE"
+                    if not self._delete_pressed:
+                        button_text = "DELETE"
+                    else:
+                        button_text = "CANCEL"
+
                     if bottom_button.collidepoint(mouse_pos):
                         bottom_button_x -= 16
                         bottom_button_y -= 6
@@ -160,11 +179,11 @@ class UI:
                         render_text(button_text, pygame.Color("white"), (bottom_text_x, bottom_text_y),
                                     button_font_selected, canvas)
                         if self.game.left_click and self._click_cooldown_counter > 10:
-                            if self._selected_item == self.game.user.get_equipt_item():
-                                self.game.user.change_equipt_item(None)
+                            if self._delete_pressed:
+                                self._delete_pressed = False
+                            else:
+                                self._delete_pressed = True
                             self._click_cooldown_counter = 0
-                            self.game.user.item_inventory.remove(self._selected_item)
-                            self._selected_item = None
                     else:
                         canvas.blit(self._ui_elements["red_button"], (bottom_button_x, bottom_button_y))
                         render_text(button_text, pygame.Color("white"), (bottom_text_x, bottom_text_y),

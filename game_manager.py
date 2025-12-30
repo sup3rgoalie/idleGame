@@ -131,7 +131,10 @@ class Game:
 
             self.user.update(self.dt)
             self.user.draw(self.canvas)
-
+            if self.key_h.tab_pressed:
+                self.game_state = self.game_states[2]
+            else:
+                self.game_state = self.game_states[0]
             self.ui.update()
 
             # UPDATE THE DISPLAY
