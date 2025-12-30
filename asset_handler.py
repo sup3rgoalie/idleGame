@@ -77,6 +77,10 @@ class AssetHandler:
             ui_inventory_image = pygame.transform.scale(ui_inventory_image, (ui_inventory_image.get_width() * 7, ui_inventory_image.get_height() * 7))
             self.ui_elements["inventory_image"] = ui_inventory_image
 
+            star_image = pygame.image.load("assets/ui_elements/star.png")
+            star_image.convert_alpha()
+            self.ui_elements["star"] = star_image
+
             tile_images_path = "assets/tile_png_folder"
             tile_names = os.listdir(tile_images_path)
             for tile_name in tile_names:

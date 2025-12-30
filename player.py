@@ -60,7 +60,8 @@ class Player(entity.Entity):
     def change_equipt_item(self, new_item: item.Item) -> None:
         if isinstance(new_item, item.Item):
             self._player_item = new_item
-        else:
+        elif new_item is None:
+            self._player_item = None
             print("TRIED TO EQUIPT NON ITEM OBJECT")
     def get_equipt_item(self) -> item.Item:
         return self._player_item
