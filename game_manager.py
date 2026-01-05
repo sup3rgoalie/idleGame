@@ -17,30 +17,6 @@ def check_collision(user: player.Player, entity_list: list[entity.Entity]) -> No
         if user.get_hitbox().colliderect(e.get_hitbox()):
             e.collide_logic(user)
 
-# GETS MOVEMENT FROM KEYBOARD FOR THE PLAYER
-def get_movement_from_keyboard(dt_velocity: float, game: Game) -> tuple[float, float]:
-
-    # DIAGONAL MOVEMENT FACTOR FOR 8 DIRECTION MOVEMENT
-    diagonal_movement_factor: float = (math.sqrt(2) / 2)
-
-    # CHANGE VELOCITY BASED ON KEY PRESSED
-    velo_x: float = 0
-    velo_y: float = 0
-    if game.key_h.a_pressed:
-        velo_x = -dt_velocity
-    if game.key_h.d__pressed:
-        velo_x = dt_velocity
-    if game.key_h.w_pressed:
-        velo_y = -dt_velocity
-    if game.key_h.s_pressed:
-        velo_y = dt_velocity
-
-    # MULTIPLY VELOCITY BY DIAGONAL FACTOR IF MOVING IN BOTH X AND Y AXIS
-    if velo_x != 0 and velo_y != 0:
-        velo_x *= diagonal_movement_factor
-        velo_y *= diagonal_movement_factor
-
-    return round(velo_x), round(velo_y)
 
 class Game:
     def __init__(self):

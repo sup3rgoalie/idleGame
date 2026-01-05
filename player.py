@@ -1,3 +1,5 @@
+import math
+
 import pygame
 import entity
 import game_manager
@@ -10,7 +12,7 @@ class Player(entity.Entity):
         super().__init__(x, y, game, images)
         self._velocity = velocity
         self.set_hitbox((16, 8), (32, 48))
-        self._image = self._images["player"]
+        self._image = self._images["farmer_standing_1"]
         self._can_move = True
         self.interacting = False
         self.crop_inventory: dict[str, int] = {"wheat": 10000, "carrot": 1000, "corn": 1000, "tomato": 1000}
@@ -18,6 +20,8 @@ class Player(entity.Entity):
         self.item_inventory: list[item.Item] = []
         self.seed_inventory: dict[str, int] = {"wheat_seed": 0, "carrot_seed": 0, "corn_seed": 0, "tomato_seed": 0}
         self._player_item: item.Item = None
+        self._sprite_counter: int = 0
+        self._moving = False
 
 
         rarity_temp = "common"
@@ -48,12 +52,31 @@ class Player(entity.Entity):
         self.interacting = False
         game_manager.check_collision(self, self._game.w_manager.current_entity_list)
         dt_velocity = self._velocity * dt
-        velo_x, velo_y = game_manager.get_movement_from_keyboard(dt_velocity, self._game)
+        velo_x, velo_y, self._moving = self.get_movement_from_keyboard(dt_velocity)
+
 
         self.update_position((velo_x, velo_y))
 
     # DRAW PLAYER
     def draw(self, screen: pygame.Surface) -> None:
+        self._sprite_counter += 1
+        if self._moving:
+            if self._sprite_counter > 20:
+                self._image = self._images["farmer_standing_2"]
+                self._sprite_counter = 0
+            elif self._sprite_counter > 15:
+                self._image = self._images["farmer_moving_1"]
+            elif self._sprite_counter > 10:
+                self._image = self._images["farmer_standing_1"]
+            elif self._sprite_counter > 5:
+                self._image = self._images["farmer_moving_2"]
+        else:
+            if self._sprite_counter > 60:
+                self._image = self._images["farmer_standing_1"]
+                self._sprite_counter = 0
+            elif self._sprite_counter > 30:
+                self._image = self._images["farmer_standing_2"]
+
         screen.blit(self._image, (self._x, self._y))
         # DEBUG pygame.draw.rect(screen, pygame.Color("black"), self._hitbox)
 
@@ -66,6 +89,32 @@ class Player(entity.Entity):
             print("TRIED TO EQUIPT NON ITEM OBJECT")
     def get_equipt_item(self) -> item.Item:
         return self._player_item
+
+    # GETS MOVEMENT FROM KEYBOARD FOR THE PLAYER
+    def get_movement_from_keyboard(self, dt_velocity: float) -> tuple[float, float, bool]:
+
+        # DIAGONAL MOVEMENT FACTOR FOR 8 DIRECTION MOVEMENT
+        diagonal_movement_factor: float = (math.sqrt(2) / 2)
+        moving: bool = True
+        # CHANGE VELOCITY BASED ON KEY PRESSED
+        velo_x: float = 0
+        velo_y: float = 0
+        if self._game.key_h.a_pressed:
+            velo_x = -dt_velocity
+        if self._game.key_h.d__pressed:
+            velo_x = dt_velocity
+        if self._game.key_h.w_pressed:
+            velo_y = -dt_velocity
+        if self._game.key_h.s_pressed:
+            velo_y = dt_velocity
+
+        # MULTIPLY VELOCITY BY DIAGONAL FACTOR IF MOVING IN BOTH X AND Y AXIS
+        if velo_x != 0 and velo_y != 0:
+            velo_x *= diagonal_movement_factor
+            velo_y *= diagonal_movement_factor
+        elif velo_x == 0 and velo_y == 0:
+            moving = False
+        return round(velo_x), round(velo_y), moving
 
     def update_position(self, velo_change: tuple[float, float]) -> None:
         new_x: float = self._x + velo_change[0]

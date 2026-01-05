@@ -1,6 +1,16 @@
 import os
 from plistlib import InvalidFileException
 import pygame
+def load_images_from_folder(folder_path: str, scale_x: int, scale_y: int) -> dict[str, pygame.Surface]:
+    return_dict: dict[str, pygame.Surface] = {}
+    image_names = os.listdir(folder_path)
+    for image_name in image_names:
+        name = image_name.split(".")[0]
+        image = pygame.image.load(os.path.join(folder_path, image_name))
+        image = pygame.transform.scale(image, (scale_x, scale_y))
+        image.convert_alpha()
+        return_dict[name] = image
+    return return_dict
 
 class AssetHandler:
     def __init__(self) -> None:
@@ -13,10 +23,17 @@ class AssetHandler:
 
     def load_images(self) -> None:
         try:
-            player_image = pygame.image.load("assets/player_placeholder.png")
-            player_image.convert_alpha()
-            player_image = pygame.transform.scale(player_image, (64, 64))
-            self.player_images["player"] = player_image
+            player_images_path = "assets/farmer_images"
+            self.player_images = load_images_from_folder(player_images_path, 64, 64)
+
+            tile_images_path = "assets/tile_png_folder"
+            self.tile_images = load_images_from_folder(tile_images_path, 64, 64)
+
+            item_icons_path = "assets/ui_elements/item_icons"
+            temp_image_dict = load_images_from_folder(item_icons_path, 96, 96)
+            for image_name in temp_image_dict.keys():
+                self.ui_elements[image_name] = temp_image_dict[image_name]
+
 
             farmland_healthy_image = pygame.image.load("assets/plant_images/farmland.png")
             farmland_healthy_image.convert_alpha()
@@ -80,24 +97,6 @@ class AssetHandler:
             star_image = pygame.image.load("assets/ui_elements/star.png")
             star_image.convert_alpha()
             self.ui_elements["star"] = star_image
-
-            tile_images_path = "assets/tile_png_folder"
-            tile_names = os.listdir(tile_images_path)
-            for tile_name in tile_names:
-                name = tile_name.split(".")[0]
-                tile_image = pygame.image.load(os.path.join(tile_images_path, tile_name))
-                tile_image = pygame.transform.scale(tile_image, (64, 64))
-                tile_image.convert_alpha()
-                self.tile_images[name] = tile_image
-
-            item_icons_path = "assets/ui_elements/item_icons"
-            item_icon_images = os.listdir(item_icons_path)
-            for item_icon_file_name in item_icon_images:
-                name = item_icon_file_name.split(".")[0]
-                item_icon_image = pygame.image.load(os.path.join(item_icons_path, item_icon_file_name))
-                item_icon_image = pygame.transform.scale(item_icon_image, (96, 96))
-                item_icon_image.convert_alpha()
-                self.ui_elements[name] = item_icon_image
 
             button_icons_path = "assets/ui_elements/buttons"
             button_icon_images = os.listdir(button_icons_path)
