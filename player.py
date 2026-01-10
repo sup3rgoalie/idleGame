@@ -62,19 +62,21 @@ class Player(entity.Entity):
         velo_x, velo_y, self._moving = self.get_movement_from_keyboard(dt_velocity)
         if self._game.left_click:
             if not self._attacking and self._game.game_state == "PLAY" and self._player_item is not None:
+                print("ATTACK")
                 self._attacking = True
                 self._attack_counter = self._player_item.get_cooldown()
                 mouse_x: int = pygame.mouse.get_pos()[0]
                 self._attack_rotation = 180 / self._attack_counter
-                if self._x - mouse_x > 0:
+                if self._x + 32 - mouse_x > 0:
                     self._attacking_dir = -1
                 else:
                     self._attacking_dir = 1
 
         if self._attacking:
             self._attack_counter -= 1
-            if self._attack_counter == 0:
+            if self._attack_counter <= 0:
                 self._attacking = False
+
 
 
         self.update_position((velo_x, velo_y))

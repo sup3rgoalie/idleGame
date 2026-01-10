@@ -74,6 +74,7 @@ class Game:
         self.left_click: bool = False
         self.right_click: bool = False
         self.middle_click: bool = False
+        self.__debug_counter = 0
 
 
 
@@ -81,6 +82,10 @@ class Game:
     def run(self) -> None:
         # MAIN GAME LOOP
         while self.running:
+
+            self.left_click = False
+            self.right_click = False
+            self.middle_click = False
 
             # CALCULATE DELTA TIME
             self.clock.tick(60)
@@ -91,9 +96,9 @@ class Game:
             # FILL SCREEN BLACK
             self.screen.fill(self.BLACK)
             self.canvas.fill(self.BLACK)
-
+            event_list = pygame.event.get()
             # CHECK GAME EVENTS
-            for event in pygame.event.get():
+            for event in event_list:
                 # STOP GAME LOOP IF WINDOW IS CLOSED/ GAME IS QUIT
                 if event.type == pygame.QUIT or self.key_h.exit_pressed:
                     self.running = False
@@ -101,17 +106,10 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.left_click = True
-                    if event.button == 2:
+                    elif event.button == 2:
                         self.middle_click = True
-                    if event.button == 3:
+                    elif event.button == 3:
                         self.right_click = True
-                if event.type == pygame.MOUSEBUTTONUP:
-                    if event.button == 1:
-                        self.left_click = False
-                    if event.button == 2:
-                        self.middle_click = False
-                    if event.button == 3:
-                        self.right_click = False
 
             self.key_h.get_key_pressed()
             # DRAW CURRENT WORLD
@@ -135,7 +133,8 @@ class Game:
             # UPDATE THE DISPLAY
             self.screen.blit(self.canvas, (0, 0))
 
-            pygame.display.update()
+
+            pygame.display.flip()
 
         # QUIT GAME
         pygame.quit()
