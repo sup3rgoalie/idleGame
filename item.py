@@ -6,6 +6,7 @@ class Item:
         self._item_type: str = item_attributes["type"]
         self._item_rarity: str = item_attributes["rarity"]
         self._item_description: str = item_attributes["description"]
+        self._cooldown: int = int(item_attributes["cooldown"])
         self._item_images: dict[str, pygame.Surface] = item_images
 
     def get_images(self) -> dict[str, pygame.Surface]:
@@ -16,3 +17,5 @@ class Item:
         return self._item_description
     def get_rarity(self) -> str:
         return self._item_rarity
+    def get_cooldown(self) -> int:
+        return self._cooldown

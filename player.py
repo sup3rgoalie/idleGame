@@ -10,18 +10,23 @@ import item
 class Player(entity.Entity):
     def __init__(self, x: float, y: float, images: dict[str, pygame.Surface], velocity: int, game: game_manager.Game) -> None:
         super().__init__(x, y, game, images)
-        self._velocity = velocity
+        self._velocity: int = velocity
         self.set_hitbox((16, 8), (32, 48))
-        self._image = self._images["farmer_standing_1"]
-        self._can_move = True
-        self.interacting = False
+        self._image: pygame.Surface  = self._images["farmer_standing_1"]
+        self._can_move: bool = True
+        self.interacting: bool = False
         self.crop_inventory: dict[str, int] = {"wheat": 10000, "carrot": 1000, "corn": 1000, "tomato": 1000}
         self.inventory_size: int = 16
         self.item_inventory: list[item.Item] = []
         self.seed_inventory: dict[str, int] = {"wheat_seed": 0, "carrot_seed": 0, "corn_seed": 0, "tomato_seed": 0}
         self._player_item: item.Item = None
         self._sprite_counter: int = 0
-        self._moving = False
+        self._moving: bool = False
+        self._attacking: bool = False
+        self._attack_counter: int = 0
+        self._attacking_dir: int = 0
+        self._attack_rotation: float = 0
+        self._attack_x, self._attack_y = 0, 0
 
 
         rarity_temp = "common"
@@ -42,6 +47,7 @@ class Player(entity.Entity):
             elif rarity_temp == "legendary":
                 rarity_temp = "common"
             temp_item_att["rarity"] = rarity_temp
+            temp_item_att["cooldown"] = "60"
             temp_item_images: dict[str, pygame.Surface] = {"inventory_icon": self._game.assets.ui_elements["basic_sword_icon"]}
             temp_item = item.Item(temp_item_att, temp_item_images)
             self.item_inventory.append(temp_item)
@@ -53,7 +59,23 @@ class Player(entity.Entity):
         game_manager.check_collision(self, self._game.w_manager.current_entity_list)
         dt_velocity = self._velocity * dt
         velo_x, velo_y, self._moving = self.get_movement_from_keyboard(dt_velocity)
+        if self._game.left_click:
+            if not self._attacking and self._game.game_state == "PLAY" and self._player_item is not None:
+                self._attacking = True
+                self._attack_counter = self._player_item.get_cooldown()
+                mouse_x: int = pygame.mouse.get_pos()[0]
+                self._attack_rotation = 180 / self._attack_counter
+                if self._x - mouse_x > 0:
+                    self._attacking_dir = -1
+                else:
+                    self._attacking_dir = 1
 
+        if self._attacking:
+            self._attack_counter -= 1
+            if self._attack_counter == 0:
+                self._attacking = False
+                self._attack_x = 0
+                self._attack_y = 0
 
         self.update_position((velo_x, velo_y))
 
@@ -78,6 +100,29 @@ class Player(entity.Entity):
                 self._image = self._images["farmer_standing_2"]
 
         screen.blit(self._image, (self._x, self._y))
+
+        if self._attacking:
+            image_rotation_angle: int = int(180 + (self._attack_rotation * self._attack_counter * self._attacking_dir))
+            attack_image = self._player_item.get_images()["inventory_icon"]
+
+            w, h = attack_image.get_size()
+            box = [pygame.math.Vector2(p) for p in [(0, 0), (w, 0), (w, -h), (0, -h)]]
+
+            box_rotate = [-p.rotate(image_rotation_angle) for p in box]
+
+            min_box = (min(box_rotate, key=lambda p: p[0])[0], min(box_rotate, key=lambda p: p[1])[1])
+            max_box = (max(box_rotate, key=lambda p: p[0])[0], max(box_rotate, key=lambda p: p[1])[1])
+
+            # Source - https://stackoverflow.com/a
+            # Posted by Rabbid76, modified by community. See post 'Timeline' for change history
+            # Retrieved 2026-01-10, License - CC BY-SA 4.0
+
+            center_rotation_pos_factor = (96 / self._player_item.get_cooldown() * self._attack_counter)
+
+            origin = (self._x + min_box[0] + self._attack_counter, self._y - max_box[1] + self._attack_counter)
+
+            rotated_image = pygame.transform.rotate(attack_image, image_rotation_angle)
+            screen.blit(rotated_image, origin)
         # DEBUG pygame.draw.rect(screen, pygame.Color("black"), self._hitbox)
 
     def change_equipt_item(self, new_item: item.Item) -> None:
