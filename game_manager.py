@@ -12,6 +12,25 @@ import world_manager
 from ui import UI
 
 
+def blit_rotate(surf, image, pos, origin_pos, angle):
+    # offset from pivot to center
+    image_rect = image.get_rect(topleft=(pos[0] - origin_pos[0], pos[1] - origin_pos[1]))
+    offset_center_to_pivot = pygame.math.Vector2(pos) - image_rect.center
+
+    # roatated offset from pivot to center
+    rotated_offset = offset_center_to_pivot.rotate(-angle)
+
+    # roatetd image center
+    rotated_image_center = (pos[0] - rotated_offset.x, pos[1] - rotated_offset.y)
+
+    # get a rotated image
+    rotated_image = pygame.transform.rotate(image, angle)
+    rotated_image_rect = rotated_image.get_rect(center=rotated_image_center)
+
+    # rotate and blit the image
+    surf.blit(rotated_image, rotated_image_rect)
+
+
 def check_collision(user: player.Player, entity_list: list[entity.Entity]) -> None:
     for e in entity_list:
         if user.get_hitbox().colliderect(e.get_hitbox()):
