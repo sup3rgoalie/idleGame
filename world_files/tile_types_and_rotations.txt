@@ -4,3 +4,8 @@ gi grass_inside_corner 4
 g1 grass_one_side 4
 g2 grass_two_side 2
 g3 grass_three_side 4
+aa ash_floor_full 0
+ww red_brick_wall 0
+ai ash_floor_inside_corner 4
+ao ash_floor_outside_corner 4
+as ash_floor_side 4

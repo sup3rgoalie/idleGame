@@ -9,7 +9,7 @@ import game_manager
 # FUNCTION THAT READS A MAP LAYOUT FILE, A 2D LIST OF INTS
 # input: file path for layout file
 # output: 2d list of int for tile mapping
-def _read_layout_file(file_path: str) -> list[list[str]]:
+def read_layout_file(file_path: str) -> list[list[str]]:
     map_layout: list[list[str]] = []
     # OPEN WORLD LAYOUT FILE
     print(f"Reading layout file {file_path}")
@@ -25,7 +25,7 @@ def _read_layout_file(file_path: str) -> list[list[str]]:
     return map_layout
 
 # READ CONFIG FILE FOR WORLD
-def _read_config_file(file_path: str, game: game_manager.Game) -> list[entity.Entity]:
+def read_config_file(file_path: str, game: game_manager.Game) -> list[entity.Entity]:
     # OPEN WORLD CONFIG FILE
     file_entity_list: list[entity.Entity] = []
     with (open(file_path, "r") as file):
@@ -57,7 +57,7 @@ def _read_config_file(file_path: str, game: game_manager.Game) -> list[entity.En
 
 
 # CREATES A SURFACE WITH WORLDS TILES
-def _create_world_surface(layout: list[list[str]], background: list[list[str]], game: game_manager.Game) -> pygame.Surface:
+def create_world_surface(layout: list[list[str]], background: list[list[str]], game: game_manager.Game) -> pygame.Surface:
     world_surface: pygame.Surface = pygame.Surface((game.SCREEN_WIDTH, game.SCREEN_HEIGHT))
     tile_config: dict[str, tuple[str, int]] = game.w_manager.get_tile_config()
     for y, row in enumerate(background):
@@ -103,12 +103,12 @@ class World:
 
         for file in self.world_files:
             if file.find("bottom") != -1:
-                self.background: list[list[str]] = _read_layout_file(os.path.join(world_folder_path, file))
+                self.background: list[list[str]] = read_layout_file(os.path.join(world_folder_path, file))
             if file.find("layout") != -1:
-                self.layout: list[list[str]] = _read_layout_file(os.path.join(world_folder_path, file))
+                self.layout: list[list[str]] = read_layout_file(os.path.join(world_folder_path, file))
             if file.find("config") != -1:
-                self.entities: list[entity.Entity] = _read_config_file(os.path.join(world_folder_path, file), game)
-        self.world_surface: pygame.Surface = _create_world_surface(self.layout, self.background, self.game)
+                self.entities: list[entity.Entity] = read_config_file(os.path.join(world_folder_path, file), game)
+        self.world_surface: pygame.Surface = create_world_surface(self.layout, self.background, self.game)
 
 
     def __str__(self) -> str:
@@ -117,5 +117,5 @@ class World:
 
 
 if __name__ == "__main__":
-    print(_read_layout_file("test_files/_read_layout_file test"))
+    print(read_layout_file("test_files/_read_layout_file test"))
 

@@ -3,6 +3,8 @@ from typing import Final
 
 import pygame
 import time
+
+import dungeon
 import entity
 import key_handler
 import player
@@ -56,6 +58,8 @@ class Game:
         self.w_manager.load_tile_config()
         self.w_manager.load_worlds("world_files")
         self.w_manager.change_world("world_0")
+
+        self.dungeons = dungeon.DungeonManager(self)
 
         # INIT VARIABLES
         self.clock = pygame.time.Clock()
