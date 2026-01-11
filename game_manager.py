@@ -103,13 +103,15 @@ class Game:
                 if event.type == pygame.QUIT or self.key_h.exit_pressed:
                     self.running = False
                     break
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        self.left_click = True
-                    elif event.button == 2:
-                        self.middle_click = True
-                    elif event.button == 3:
-                        self.right_click = True
+
+            mouse_buttons = pygame.mouse.get_pressed()
+
+            if mouse_buttons[0]:
+                self.left_click = True
+            if mouse_buttons[1]:
+                self.middle_click = True
+            if mouse_buttons[2]:
+                self.right_click = True
 
             self.key_h.get_key_pressed()
             # DRAW CURRENT WORLD

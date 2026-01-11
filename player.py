@@ -62,7 +62,6 @@ class Player(entity.Entity):
         velo_x, velo_y, self._moving = self.get_movement_from_keyboard(dt_velocity)
         if self._game.left_click:
             if not self._attacking and self._game.game_state == "PLAY" and self._player_item is not None:
-                print("ATTACK")
                 self._attacking = True
                 self._attack_counter = self._player_item.get_cooldown()
                 mouse_x: int = pygame.mouse.get_pos()[0]
@@ -76,8 +75,6 @@ class Player(entity.Entity):
             self._attack_counter -= 1
             if self._attack_counter <= 0:
                 self._attacking = False
-
-
 
         self.update_position((velo_x, velo_y))
 
@@ -112,8 +109,7 @@ class Player(entity.Entity):
             self._attacking_rect.y = self._y + 64 - self._attack_counter * 4
             self._attacking_rect.x = self._x + 8 + (4 * abs(self._player_item.get_cooldown() / 2 - self._attack_counter) * -self._attacking_dir) + (64 * self._attacking_dir)
 
-
-            pygame.draw.rect(screen, (255, 0, 0), self._attacking_rect, 2)# DEBUG pygame.draw.rect(screen, pygame.Color("black"), self._hitbox)
+            #pygame.draw.rect(screen, (255, 0, 0), self._attacking_rect, 2)# DEBUG pygame.draw.rect(screen, pygame.Color("black"), self._hitbox)
 
     def change_equipt_item(self, new_item: item.Item) -> None:
         if isinstance(new_item, item.Item):
