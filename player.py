@@ -28,6 +28,7 @@ class Player(entity.Entity):
         self._attack_rotation: float = 0
         self._attack_x, self._attack_y = 0, 0
         self._attacking_rect = pygame.Rect(0,0, 48, 48)
+        self._attack_start_angle: int = 0
 
 
         rarity_temp = "common"
@@ -65,11 +66,23 @@ class Player(entity.Entity):
                 self._attacking = True
                 self._attack_counter = self._player_item.get_cooldown()
                 mouse_x: int = pygame.mouse.get_pos()[0]
+                mouse_y: int = pygame.mouse.get_pos()[1]
                 self._attack_rotation = 180 / self._attack_counter
+                diff_x: int = mouse_x - self._x - 32
+                diff_y: int = mouse_y - self._y - 32
                 if self._x + 32 - mouse_x > 0:
                     self._attacking_dir = -1
                 else:
                     self._attacking_dir = 1
+                if abs(diff_y) > abs(diff_x):
+                    self._attack_start_angle = 90
+                    if diff_y > 32:
+                        self._attacking_dir = 1
+                    else:
+                        self._attacking_dir = -1
+                else:
+                    self._attack_start_angle = 180
+
 
         if self._attacking:
             self._attack_counter -= 1
@@ -101,15 +114,20 @@ class Player(entity.Entity):
         screen.blit(self._image, (self._x, self._y))
 
         if self._attacking:
-            image_rotation_angle: int = int(180 + (self._attack_rotation * self._attack_counter * self._attacking_dir))
+            image_rotation_angle: int = int(self._attack_start_angle + (self._attack_rotation * self._attack_counter * self._attacking_dir))
             attack_image = self._player_item.get_images()["inventory_icon"]
 
             game_manager.blit_rotate(screen,attack_image, (self._x + 32, self._y + 32), (attack_image.get_width() / 2, attack_image.get_height()), image_rotation_angle)
 
-            self._attacking_rect.y = self._y + 64 - self._attack_counter * 4
-            self._attacking_rect.x = self._x + 8 + (4 * abs(self._player_item.get_cooldown() / 2 - self._attack_counter) * -self._attacking_dir) + (64 * self._attacking_dir)
+            if self._attack_start_angle == 180:
+                self._attacking_rect.y = self._y + 64 - self._attack_counter * 4
+                self._attacking_rect.x = self._x + 8 + (4 * abs(self._player_item.get_cooldown() / 2 - self._attack_counter) * -self._attacking_dir) + (64 * self._attacking_dir)
+            else:
+                self._attacking_rect.x = self._x - 56 + self._attack_counter * 4
+                self._attacking_rect.y = self._y + 8 + (4 * abs(self._player_item.get_cooldown() / 2 - self._attack_counter) * -self._attacking_dir) + (
+                                                     64 * self._attacking_dir)
 
-            #pygame.draw.rect(screen, (255, 0, 0), self._attacking_rect, 2)# DEBUG pygame.draw.rect(screen, pygame.Color("black"), self._hitbox)
+            pygame.draw.rect(screen, (255, 0, 0), self._attacking_rect, 2)# DEBUG pygame.draw.rect(screen, pygame.Color("black"), self._hitbox)
 
     def change_equipt_item(self, new_item: item.Item) -> None:
         if isinstance(new_item, item.Item):

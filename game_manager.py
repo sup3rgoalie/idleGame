@@ -61,7 +61,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.text_font = pygame.font.SysFont("Arial", 48, True)
 
-        self.user: player.Player = player.Player(10, 10, self.assets.player_images, 300, self)
+        self.user: player.Player = player.Player(400, 400, self.assets.player_images, 300, self)
         self.key_h: key_handler.KeyHandler = key_handler.KeyHandler(self)
         self.last_time: float = time.time()
         self.current_time: float = 0.0
